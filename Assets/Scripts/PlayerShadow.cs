@@ -3,14 +3,14 @@ using System.Collections;
 
 public class PlayerShadow : MonoBehaviour {
 	public GameObject player;
-	UnityStandardAssets.Characters.ThirdPerson.ThirdPersonCharacter behavior;
+	PlayerController behavior;
 	float range;
 	bool playerIsInLight = false;
 
 	// Use this for initialization
 	void Start () {
 		range = gameObject.GetComponent<Light>().range;
-		behavior = player.GetComponent<UnityStandardAssets.Characters.ThirdPerson.ThirdPersonCharacter> ();
+		behavior = player.GetComponent<PlayerController> ();
 	}
 	
 	// Update is called once per frame
