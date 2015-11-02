@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour {
 		CheckGroundStatus();
 		move = Vector3.ProjectOnPlane(move, m_GroundNormal);
 		float v = CrossPlatformInputManager.GetAxis ("Vertical");
-		float MoveSpeed = 4;
+		float MoveSpeed = hide ? slinkMoveSpeed : 4f;
 		float RotateSpeed = 120;
 		float MoveForward = Input.GetAxis("Vertical") *  MoveSpeed * Time.deltaTime;
 		float MoveRotate = Input.GetAxis("Horizontal") * RotateSpeed * Time.deltaTime;
@@ -92,30 +92,6 @@ public class PlayerController : MonoBehaviour {
 			transform.position = new Vector3(pos.x, pos.y, tempZ);
 		} else {
 			m_Rigidbody.useGravity = true;
-<<<<<<< HEAD
-			/*m_TurnAmount = Mathf.Atan2(move.x, move.z);
-			m_ForwardAmount = move.z;
-			ApplyExtraTurnRotation();
-			
-			// control and velocity handling is different when grounded and airborne:
-			if (m_IsGrounded)
-			{
-				HandleGroundedMovement(crouch, jump);
-			}
-			else
-			{
-				HandleAirborneMovement();
-			}
-			*/
-			float MoveSpeed = hide ? slinkMoveSpeed : 4f;
-			float RotateSpeed = 120;
-			float MoveForward = Input.GetAxis("Vertical") *  MoveSpeed * Time.deltaTime;
-			float MoveRotate = Input.GetAxis("Horizontal") * RotateSpeed * Time.deltaTime;
-			
-			
-			// Move the player
-=======
->>>>>>> 7218044544138f4f502ad51a1657baa541000ace
 			transform.Translate(Vector3.forward * MoveForward);
 			transform.Rotate(Vector3.up * MoveRotate);
 			if(Input.GetAxis("Horizontal") != 0) print ("rotate");
