@@ -69,8 +69,11 @@ public class PlayerController : MonoBehaviour {
 		//if (v > 0 && climb && numLights == 0 && hide) {
 		if (climb && numLights == 0 && hide) {
 			m_Rigidbody.useGravity = false;
+			float tempZ = transform.position.z;
 			transform.Translate(Vector3.up * MoveForward);
 			transform.Translate(Vector3.right * Input.GetAxis("Horizontal") * MoveSpeed * Time.deltaTime);
+			var pos = transform.position;
+			transform.position = new Vector3(pos.x, pos.y, tempZ);
 		} else {
 			m_Rigidbody.useGravity = true;
 			transform.Translate(Vector3.forward * MoveForward);
