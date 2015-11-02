@@ -25,12 +25,18 @@ public class PlayerController : MonoBehaviour {
 	bool m_Crouching;
 	
 	public int numLights = 0;
+	public float slinkMoveSpeed = 6f;
+
+	GameObject slinkIndicator;
+	MeshRenderer playerRenderer;
 
 	bool climb = false;
 	
 	void Start()
 	{
 		m_Rigidbody = GetComponent<Rigidbody>();
+		playerRenderer = GetComponent<MeshRenderer> ();
+		slinkIndicator = GameObject.Find ("SlinkingPlayer");
 		
 		m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 		m_OrigGroundCheckDistance = m_GroundCheckDistance;
@@ -51,6 +57,14 @@ public class PlayerController : MonoBehaviour {
 	
 	public void Move(Vector3 move, bool crouch, bool jump, bool hide)
 	{
+
+		if (hide) {
+			slinkIndicator.GetComponent<MeshRenderer> ().enabled = true;
+			playerRenderer.enabled = false;
+		} else {
+			slinkIndicator.GetComponent<MeshRenderer>().enabled = false;
+			playerRenderer.enabled = true;
+		}
 		
 		// convert the world relative moveInput vector into a local-relative
 		// turn amount and forward amount required to head in the desired
@@ -81,7 +95,7 @@ public class PlayerController : MonoBehaviour {
 				HandleAirborneMovement();
 			}
 			*/
-			float MoveSpeed = 4;
+			float MoveSpeed = hide ? slinkMoveSpeed : 4f;
 			float RotateSpeed = 120;
 			float MoveForward = Input.GetAxis("Vertical") *  MoveSpeed * Time.deltaTime;
 			float MoveRotate = Input.GetAxis("Horizontal") * RotateSpeed * Time.deltaTime;
