@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] float m_MoveSpeedMultiplier = 1f;
 	[SerializeField] float m_AnimSpeedMultiplier = 1f;
 	[SerializeField] float m_GroundCheckDistance = 0.6f;
+	[SerializeField] float m_jumpSpeed = 250;
+
 	
 	Rigidbody m_Rigidbody;
 	public bool m_IsGrounded;
@@ -87,6 +89,16 @@ public class PlayerController : MonoBehaviour {
 		else{
 			GetComponent<MeshRenderer>().material.color = Color.red;
 		}
+
+		if (!jump) 
+		{
+			if (Input.GetKeyDown (KeyCode.Space)) 
+			{
+				m_Rigidbody.AddForce(Vector3.up * m_jumpSpeed);
+			}
+		}
+
+
 	}
 	
 	void HandleAirborneMovement()
@@ -110,6 +122,7 @@ public class PlayerController : MonoBehaviour {
 			//m_Animator.applyRootMotion = false;
 			m_GroundCheckDistance = 0.6f;
 		}
+
 	}
 	
 	void ApplyExtraTurnRotation()
