@@ -62,43 +62,20 @@ public class PlayerController : MonoBehaviour {
 		CheckGroundStatus();
 		move = Vector3.ProjectOnPlane(move, m_GroundNormal);
 		float v = CrossPlatformInputManager.GetAxis ("Vertical");
-		if (v > 0 && climb && numLights == 0 && hide) {
+		float MoveSpeed = 4;
+		float RotateSpeed = 120;
+		float MoveForward = Input.GetAxis("Vertical") *  MoveSpeed * Time.deltaTime;
+		float MoveRotate = Input.GetAxis("Horizontal") * RotateSpeed * Time.deltaTime;
+		//if (v > 0 && climb && numLights == 0 && hide) {
+		if (climb && numLights == 0 && hide) {
 			m_Rigidbody.useGravity = false;
-			transform.position += new Vector3 (0, 3*Time.deltaTime, 0);
+			transform.Translate(Vector3.up * MoveForward);
+			transform.Translate(Vector3.right * Input.GetAxis("Horizontal") * MoveSpeed * Time.deltaTime);
 		} else {
 			m_Rigidbody.useGravity = true;
-			/*m_TurnAmount = Mathf.Atan2(move.x, move.z);
-			m_ForwardAmount = move.z;
-			ApplyExtraTurnRotation();
-			
-			// control and velocity handling is different when grounded and airborne:
-			if (m_IsGrounded)
-			{
-				HandleGroundedMovement(crouch, jump);
-			}
-			else
-			{
-				HandleAirborneMovement();
-			}
-			*/
-			float MoveSpeed = 4;
-			float RotateSpeed = 120;
-			float MoveForward = Input.GetAxis("Vertical") *  MoveSpeed * Time.deltaTime;
-			float MoveRotate = Input.GetAxis("Horizontal") * RotateSpeed * Time.deltaTime;
-			
-			
-			// Move the player
 			transform.Translate(Vector3.forward * MoveForward);
 			transform.Rotate(Vector3.up * MoveRotate);
-			
-			// send input and other state parameters to the animator
-			//UpdateAnimator(move);
-
-			//Vector3 v = new Vector3(0 / Time.deltaTime;
-			
-			// we preserve the existing y part of the current velocity.
-			//v.y = m_Rigidbody.velocity.y;
-			//m_Rigidbody.velocity = v;
+			if(Input.GetAxis("Horizontal") != 0) print ("rotate");
 		}
 		
 		if (hide && numLights == 0) {
