@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] float m_MoveSpeedMultiplier = 1f;
 	[SerializeField] float m_AnimSpeedMultiplier = 1f;
 	[SerializeField] float m_GroundCheckDistance = 0.6f;
+	[SerializeField] float m_jumpSpeed = 250;
+
 	
 	Rigidbody m_Rigidbody;
 	public bool m_IsGrounded;
@@ -76,11 +78,21 @@ public class PlayerController : MonoBehaviour {
 		CheckGroundStatus();
 		move = Vector3.ProjectOnPlane(move, m_GroundNormal);
 		float v = CrossPlatformInputManager.GetAxis ("Vertical");
-		if (v > 0 && climb && numLights == 0 && hide) {
+		float MoveSpeed = 4;
+		float RotateSpeed = 120;
+		float MoveForward = Input.GetAxis("Vertical") *  MoveSpeed * Time.deltaTime;
+		float MoveRotate = Input.GetAxis("Horizontal") * RotateSpeed * Time.deltaTime;
+		//if (v > 0 && climb && numLights == 0 && hide) {
+		if (climb && numLights == 0 && hide) {
 			m_Rigidbody.useGravity = false;
-			transform.position += new Vector3 (0, 3*Time.deltaTime, 0);
+			float tempZ = transform.position.z;
+			transform.Translate(Vector3.up * MoveForward);
+			transform.Translate(Vector3.right * Input.GetAxis("Horizontal") * MoveSpeed * Time.deltaTime);
+			var pos = transform.position;
+			transform.position = new Vector3(pos.x, pos.y, tempZ);
 		} else {
 			m_Rigidbody.useGravity = true;
+<<<<<<< HEAD
 			/*m_TurnAmount = Mathf.Atan2(move.x, move.z);
 			m_ForwardAmount = move.z;
 			ApplyExtraTurnRotation();
@@ -102,17 +114,11 @@ public class PlayerController : MonoBehaviour {
 			
 			
 			// Move the player
+=======
+>>>>>>> 7218044544138f4f502ad51a1657baa541000ace
 			transform.Translate(Vector3.forward * MoveForward);
 			transform.Rotate(Vector3.up * MoveRotate);
-			
-			// send input and other state parameters to the animator
-			//UpdateAnimator(move);
-
-			//Vector3 v = new Vector3(0 / Time.deltaTime;
-			
-			// we preserve the existing y part of the current velocity.
-			//v.y = m_Rigidbody.velocity.y;
-			//m_Rigidbody.velocity = v;
+			if(Input.GetAxis("Horizontal") != 0) print ("rotate");
 		}
 		
 		if (hide && numLights == 0) {
@@ -121,6 +127,16 @@ public class PlayerController : MonoBehaviour {
 		else{
 			GetComponent<MeshRenderer>().material.color = Color.red;
 		}
+
+		if (!jump) 
+		{
+			if (Input.GetKeyDown (KeyCode.Space)) 
+			{
+				m_Rigidbody.AddForce(Vector3.up * m_jumpSpeed);
+			}
+		}
+
+
 	}
 	
 	void HandleAirborneMovement()
@@ -144,6 +160,7 @@ public class PlayerController : MonoBehaviour {
 			//m_Animator.applyRootMotion = false;
 			m_GroundCheckDistance = 0.6f;
 		}
+
 	}
 	
 	void ApplyExtraTurnRotation()
