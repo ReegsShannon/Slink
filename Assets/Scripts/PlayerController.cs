@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour {
 	public void Move(Vector3 move, bool crouch, bool jump, bool hide)
 	{
 
-		if (hide) {
+		if (hide && numLights == 0) {
 			slinkIndicator.GetComponent<MeshRenderer> ().enabled = true;
 			playerRenderer.enabled = false;
 		} else {
