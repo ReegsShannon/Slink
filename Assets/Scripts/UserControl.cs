@@ -27,10 +27,10 @@ public class UserControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (!m_Jump)
+		if (!m_Jump) 
 		{
-			m_Jump = Input.GetKeyDown(KeyCode.Space);
-		}
+			m_Jump = Input.GetKeyDown (KeyCode.Space);
+		} 
 	}
 
 	// Fixed update is called in sync with physics
@@ -62,5 +62,6 @@ public class UserControl : MonoBehaviour {
 		// pass all parameters to the character control script
 		m_Character.Move(m_Move, crouch, m_Jump, hide);
 		m_Jump = false;
+
 	}
 }
