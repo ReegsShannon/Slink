@@ -28,9 +28,18 @@ public class EnemyScript : MonoBehaviour {
 		if (other.tag != "Player")
 			return;
 
-		/*if (playerScript.isHidden()) {
-			set destination to player
-		}*/
+		if (!playerScript.isSlinking ()) {
+			navMesh.SetDestination(other.transform.position);
+		}
+	}
+
+	void OnTriggerStay(Collider other) {
+		if (other.tag != "Player")
+			return;
+
+		if (!playerScript.isSlinking ()) {
+			navMesh.SetDestination (other.transform.position);
+		}
 	}
 
 	void OnTriggerExit(Collider other) {
