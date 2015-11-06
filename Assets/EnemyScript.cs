@@ -3,15 +3,20 @@ using System.Collections;
 
 public class EnemyScript : MonoBehaviour {
 
+	GameObject player;
 	NavMeshAgent navMesh;
 	PlayerController playerScript;
+
+	Vector3 originalPosition;
 
 	// Use this for initialization
 	void Start () {
 		navMesh = GetComponent<NavMeshAgent> ();
-		playerScript = GameObject.FindGameObjectWithTag ("Player").GetComponent<PlayerController> ();
+		player = GameObject.FindGameObjectWithTag ("Player");
+		playerScript = player.GetComponent<PlayerController> ();
 
-		navMesh.SetDestination(transform.position);
+		originalPosition = transform.position;
+		navMesh.SetDestination(originalPosition);
 	}
 	
 	// Update is called once per frame
@@ -26,5 +31,11 @@ public class EnemyScript : MonoBehaviour {
 		/*if (playerScript.isHidden()) {
 			set destination to player
 		}*/
+	}
+
+	void OnTriggerExit(Collider other) {
+		if (other.tag == "Player") {
+			navMesh.SetDestination(originalPosition);
+		}
 	}
 }
