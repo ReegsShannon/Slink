@@ -64,6 +64,7 @@ public class LightController : MonoBehaviour {
 	void RotatingLightBehavior()
 	{
 		print ("Light is Rotating");
+		transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(transform.position + Vector3.right), 10 * Time.deltaTime);
 	}
 
 }
