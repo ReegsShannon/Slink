@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] float m_RunCycleLegOffset = 0.2f; //specific to the character in sample assets, will need to be modified to work with others
 	[SerializeField] float m_MoveSpeedMultiplier = 1f;
 	[SerializeField] float m_AnimSpeedMultiplier = 1f;
-	[SerializeField] float m_GroundCheckDistance = 0.6f;
+	[SerializeField] float m_GroundCheckDistance = 0.7f;
 	[SerializeField] float m_jumpSpeed = 250;
 
 	
@@ -31,6 +31,9 @@ public class PlayerController : MonoBehaviour {
 
 	GameObject slinkIndicator;
 	MeshRenderer playerRenderer;
+	BoxCollider playerCollider;
+	MeshRenderer slinkRenderer;
+	BoxCollider slinkCollider;
 
 	bool climb = false;
 	
@@ -38,7 +41,10 @@ public class PlayerController : MonoBehaviour {
 	{
 		m_Rigidbody = GetComponent<Rigidbody>();
 		playerRenderer = GetComponent<MeshRenderer> ();
+		playerCollider = GetComponent<BoxCollider> ();
 		slinkIndicator = GameObject.Find ("SlinkingPlayer");
+		slinkRenderer = slinkIndicator.GetComponent<MeshRenderer> ();
+		slinkCollider = slinkIndicator.GetComponent<BoxCollider> ();
 		
 		m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 		m_OrigGroundCheckDistance = m_GroundCheckDistance;
@@ -57,44 +63,40 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 	
-	public void Move(Vector3 move, bool crouch, bool jump, bool hide)
+	public void Move(Vector3 move, float rotate, bool jump, bool hide)
 	{
 
 		if (hide && numLights == 0) {
-			slinkIndicator.GetComponent<MeshRenderer> ().enabled = true;
+			slinkRenderer.enabled = true;
 			playerRenderer.enabled = false;
+			slinkCollider.enabled = true;
+			playerCollider.enabled = false;
 		} else {
-			slinkIndicator.GetComponent<MeshRenderer>().enabled = false;
+			slinkRenderer.enabled = false;
 			playerRenderer.enabled = true;
+			slinkCollider.enabled = false;
+			playerCollider.enabled = true;
 		}
-		
-		// convert the world relative moveInput vector into a local-relative
-		// turn amount and forward amount required to head in the desired
-		// direction.
-		if (move.magnitude > 1f) move.Normalize();
-		
-		
-		move = transform.InverseTransformDirection(move);
+
 		CheckGroundStatus();
-		move = Vector3.ProjectOnPlane(move, m_GroundNormal);
-		float v = CrossPlatformInputManager.GetAxis ("Vertical");
 		float MoveSpeed = hide ? slinkMoveSpeed : 4f;
 		float RotateSpeed = 120;
-		float MoveForward = Input.GetAxis("Vertical") *  MoveSpeed * Time.deltaTime;
-		float MoveRotate = Input.GetAxis("Horizontal") * RotateSpeed * Time.deltaTime;
+		float MoveForward = move.z *  MoveSpeed * Time.deltaTime;
+		float MoveRight = move.x *  MoveSpeed * Time.deltaTime;
+		float MoveRotate = rotate * RotateSpeed * Time.deltaTime;
 		//if (v > 0 && climb && numLights == 0 && hide) {
-		if (climb && numLights == 0 && hide) {
+		if (climb && numLights == 0 & hide) {
 			m_Rigidbody.useGravity = false;
 			float tempZ = transform.position.z;
-			transform.Translate(Vector3.up * MoveForward);
-			transform.Translate(Vector3.right * Input.GetAxis("Horizontal") * MoveSpeed * Time.deltaTime);
+			transform.position += transform.up * MoveForward;
+			transform.position += transform.right * MoveRight;
 			var pos = transform.position;
 			transform.position = new Vector3(pos.x, pos.y, tempZ);
 		} else {
 			m_Rigidbody.useGravity = true;
-			transform.Translate(Vector3.forward * MoveForward);
-			transform.Rotate(Vector3.up * MoveRotate);
-			if(Input.GetAxis("Horizontal") != 0) print ("rotate");
+			transform.position += transform.forward * MoveForward;
+			transform.position += transform.right * MoveRight;
+			transform.Rotate(transform.up * MoveRotate);
 		}
 		
 		if (hide && numLights == 0) {
@@ -104,12 +106,9 @@ public class PlayerController : MonoBehaviour {
 			GetComponent<MeshRenderer>().material.color = Color.red;
 		}
 
-		if (!jump) 
+		if (jump && m_IsGrounded) 
 		{
-			if (Input.GetKeyDown (KeyCode.Space)) 
-			{
-				m_Rigidbody.AddForce(Vector3.up * m_jumpSpeed);
-			}
+			m_Rigidbody.AddForce(Vector3.up * m_jumpSpeed);
 		}
 
 

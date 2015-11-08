@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityStandardAssets.CrossPlatformInput;
+using InControl;
 
 [RequireComponent(typeof (PlayerController))]
 public class UserControl : MonoBehaviour {
@@ -27,9 +28,10 @@ public class UserControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (!m_Jump) 
-		{
-			m_Jump = Input.GetKeyDown (KeyCode.Space);
+		InputDevice device = InputManager.ActiveDevice;
+		if (!m_Jump && (device.Action1.WasPressed || Input.GetKeyDown (KeyCode.Space))) {
+			m_Jump = true;
+			print ("yay");
 		} 
 	}
 
@@ -37,30 +39,54 @@ public class UserControl : MonoBehaviour {
 	private void FixedUpdate()
 	{
 		// read inputs
-		float h = CrossPlatformInputManager.GetAxis("Horizontal");
-		float v = CrossPlatformInputManager.GetAxis("Vertical");
-		bool crouch = Input.GetKey(KeyCode.C);
-		
+		float forward = 0;
+		float strafe = 0;
+		float rotate = 0;
+		float look = 0;
+		forward = CrossPlatformInputManager.GetAxis("Vertical");
+		strafe = CrossPlatformInputManager.GetAxis("Horizontal");
+		rotate = CrossPlatformInputManager.GetAxis("Rotate");
+		look = CrossPlatformInputManager.GetAxis("Look");
+		InputDevice device = InputManager.ActiveDevice;
+
+		if (device.LeftStickX != 0f) {
+			strafe = device.LeftStickX;
+		}
+		if (device.LeftStickY != 0f) {
+			forward = device.LeftStickY;
+		}
+		if (device.RightStickX != 0f) {
+			rotate = device.RightStickX;
+		}
+		if (device.RightStickY != 0f) {
+			look = device.RightStickY;
+		}
+
+		float m_Rotate;
 		// calculate move direction to pass to character
 		if (m_Cam != null)
 		{
 			// calculate camera relative direction to move:
-			m_CamForward = Vector3.Scale(m_Cam.forward, new Vector3(1, 0, 1)).normalized;
-			m_Move = v*m_CamForward + h*m_Cam.right;
+			//m_CamForward = Vector3.Scale(m_Cam.forward, new Vector3(1, 0, 1)).normalized;
+			//m_Move = forward*m_CamForward + strafe*m_Cam.right;
+			//m_Rotate = rotate*m_Cam.right + look*m_Cam.up;
 		}
 		else
 		{
 			// we use world-relative directions in the case of no main camera
-			m_Move = v*Vector3.forward + h*Vector3.right;
+			//m_Move = forward*Vector3.forward + strafe*Vector3.right;
 		}
+		m_Move = forward*Vector3.forward + strafe*Vector3.right;
+		m_Rotate = rotate;
+
 
 		bool hide = false;
-		if (Input.GetKey (KeyCode.RightShift))
+		if (Input.GetKey (KeyCode.RightShift) || device.RightTrigger)
 			hide = true;
 		
 		
 		// pass all parameters to the character control script
-		m_Character.Move(m_Move, crouch, m_Jump, hide);
+		m_Character.Move(m_Move, m_Rotate, m_Jump, hide);
 		m_Jump = false;
 
 	}
