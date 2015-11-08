@@ -167,4 +167,8 @@ public class PlayerController : MonoBehaviour {
 			//m_Animator.applyRootMotion = false;
 		}
 	}
+
+	public bool isSlinking() {
+		return slinkIndicator.GetComponent<MeshRenderer> ().enabled;
+	}
 }
