@@ -94,7 +94,7 @@ public class PlayerController : MonoBehaviour {
 			m_Rigidbody.useGravity = true;
 			transform.Translate(Vector3.forward * MoveForward);
 			transform.Rotate(Vector3.up * MoveRotate);
-			if(Input.GetAxis("Horizontal") != 0) print ("rotate");
+			//if(Input.GetAxis("Horizontal") != 0) print ("rotate");
 		}
 		
 		if (hide && numLights == 0) {
