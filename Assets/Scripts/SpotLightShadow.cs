@@ -17,9 +17,11 @@ public class SpotLightShadow : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
  		RaycastHit hit; 
-		var rayDirection = player.transform.position - range*transform.position;
-		Debug.DrawRay(transform.position, rayDirection * 5f, Color.blue);
-		if (Physics.Raycast (transform.position, rayDirection, out hit)) 
+		var lightToObject = player.transform.position - transform.position;
+		var lightForward = transform.forward;
+		var angleBetween = Vector3.Angle (lightToObject, lightForward);
+		Debug.DrawRay(transform.position, lightToObject * 5f, Color.blue);
+		if (angleBetween < GetComponent<Light>().spotAngle/2 && Physics.Raycast (transform.position, lightToObject, out hit, range)) 
 		{	
  			if (hit.transform.tag == "Player") 
 			{

@@ -81,12 +81,6 @@ public class PlayerController : MonoBehaviour {
 		if (climb && numLights == 0 & hide) {
 			m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionZ;
 			m_Rigidbody.useGravity = false;
-			/*float tempZ = transform.position.z;
-			transform.position += transform.up * MoveForward;
-			transform.position += transform.right * MoveRight;
-			var pos = transform.position;
-			transform.position = new Vector3(pos.x, pos.y, tempZ);
-			*/
 			Vector3 movement = MoveSpeed * ((transform.up * move.z) + (transform.right * move.x));
 			movement.z = m_Rigidbody.velocity.z;
 			m_Rigidbody.velocity = movement;
