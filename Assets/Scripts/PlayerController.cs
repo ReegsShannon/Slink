@@ -165,4 +165,9 @@ public class PlayerController : MonoBehaviour {
 	public bool isSlinking() {
 		return slinkIndicator.GetComponent<MeshRenderer> ().enabled;
 	}
+
+	public void playerCaught() {
+		//send player back to previous checkpoint
+		print ("Caught");
+	}
 }
