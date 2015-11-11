@@ -87,6 +87,8 @@ public class EnemyScript : MonoBehaviour {
 			print ("trigger stay");
 			navMesh.SetDestination (other.transform.position);
 			chasingPlayer = true;
+		} else {
+			chasingPlayer = false;
 		}
 	}
 
