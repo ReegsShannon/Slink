@@ -2,17 +2,12 @@
 using System.Collections;
 using UnityStandardAssets.CrossPlatformInput;
 
-[RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(BoxCollider))]
 public class PlayerController : MonoBehaviour {
 
 	[SerializeField] float m_MovingTurnSpeed = 360;
 	[SerializeField] float m_StationaryTurnSpeed = 180;
 	[SerializeField] float m_JumpPower = 12f;
 	[Range(1f, 4f)][SerializeField] float m_GravityMultiplier = 2f;
-	[SerializeField] float m_RunCycleLegOffset = 0.2f; //specific to the character in sample assets, will need to be modified to work with others
-	[SerializeField] float m_MoveSpeedMultiplier = 1f;
-	[SerializeField] float m_AnimSpeedMultiplier = 1f;
 	[SerializeField] float m_GroundCheckDistance = 0.7f;
 	[SerializeField] float m_jumpSpeed = 250;
 
@@ -24,14 +19,13 @@ public class PlayerController : MonoBehaviour {
 	float m_TurnAmount;
 	float m_ForwardAmount;
 	Vector3 m_GroundNormal;
-	bool m_Crouching;
-	
+
 	public int numLights = 0;
 	public float slinkMoveSpeed = 6f;
 
 	GameObject slinkIndicator;
 	MeshRenderer playerRenderer;
-	BoxCollider playerCollider;
+	CapsuleCollider playerCollider;
 	MeshRenderer slinkRenderer;
 	BoxCollider slinkCollider;
 
@@ -41,7 +35,7 @@ public class PlayerController : MonoBehaviour {
 	{
 		m_Rigidbody = GetComponent<Rigidbody>();
 		playerRenderer = GetComponent<MeshRenderer> ();
-		playerCollider = GetComponent<BoxCollider> ();
+		playerCollider = GetComponent<CapsuleCollider> ();
 		slinkIndicator = GameObject.Find ("SlinkingPlayer");
 		slinkRenderer = slinkIndicator.GetComponent<MeshRenderer> ();
 		slinkCollider = slinkIndicator.GetComponent<BoxCollider> ();
@@ -84,18 +78,24 @@ public class PlayerController : MonoBehaviour {
 		float MoveForward = move.z *  MoveSpeed * Time.deltaTime;
 		float MoveRight = move.x *  MoveSpeed * Time.deltaTime;
 		float MoveRotate = rotate * RotateSpeed * Time.deltaTime;
-		//if (v > 0 && climb && numLights == 0 && hide) {
 		if (climb && numLights == 0 & hide) {
+			m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionZ;
 			m_Rigidbody.useGravity = false;
-			float tempZ = transform.position.z;
+			/*float tempZ = transform.position.z;
 			transform.position += transform.up * MoveForward;
 			transform.position += transform.right * MoveRight;
 			var pos = transform.position;
 			transform.position = new Vector3(pos.x, pos.y, tempZ);
+			*/
+			Vector3 movement = MoveSpeed * ((transform.up * move.z) + (transform.right * move.x));
+			movement.z = m_Rigidbody.velocity.z;
+			m_Rigidbody.velocity = movement;
 		} else {
+			m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 			m_Rigidbody.useGravity = true;
-			transform.position += transform.forward * MoveForward;
-			transform.position += transform.right * MoveRight;
+			Vector3 movement = MoveSpeed * ((transform.forward * move.z) + (transform.right * move.x));
+			movement.y = m_Rigidbody.velocity.y;
+			m_Rigidbody.velocity = movement;
 			transform.Rotate(transform.up * MoveRotate);
 		}
 		
