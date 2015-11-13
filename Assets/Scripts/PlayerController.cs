@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour {
 
 	GameObject slinkIndicator;
 	MeshRenderer playerRenderer;
-	CapsuleCollider playerCollider;
+	Collider playerCollider;
 	MeshRenderer slinkRenderer;
 	BoxCollider slinkCollider;
 
@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour {
 	{
 		m_Rigidbody = GetComponent<Rigidbody>();
 		playerRenderer = GetComponent<MeshRenderer> ();
-		playerCollider = GetComponent<CapsuleCollider> ();
+		playerCollider = GetComponent<Collider> ();
 		slinkIndicator = GameObject.Find ("SlinkingPlayer");
 		slinkRenderer = slinkIndicator.GetComponent<MeshRenderer> ();
 		slinkCollider = slinkIndicator.GetComponent<BoxCollider> ();
@@ -164,5 +164,10 @@ public class PlayerController : MonoBehaviour {
 
 	public bool isSlinking() {
 		return slinkIndicator.GetComponent<MeshRenderer> ().enabled;
+	}
+
+	public void playerCaught() {
+		//send player back to previous checkpoint
+		print ("Caught");
 	}
 }

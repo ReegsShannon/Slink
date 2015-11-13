@@ -73,7 +73,6 @@ public class EnemyScript : MonoBehaviour {
 			return;
 
 		if (!playerScript.isSlinking ()) {
-			print ("trigger enter");
 			navMesh.SetDestination(other.transform.position);
 			chasingPlayer = true;
 		}
@@ -84,9 +83,11 @@ public class EnemyScript : MonoBehaviour {
 			return;
 
 		if (!playerScript.isSlinking ()) {
-			print ("trigger stay");
 			navMesh.SetDestination (other.transform.position);
 			chasingPlayer = true;
+		} else {
+			chasingPlayer = false;
+			StartCoroutine(Patrol ());
 		}
 	}
 
@@ -94,6 +95,12 @@ public class EnemyScript : MonoBehaviour {
 		if (other.tag == "Player") {
 			navMesh.SetDestination(originalPosition);
 			chasingPlayer = false;
+		}
+	}
+
+	void OnCollisionEnter(Collision other) {
+		if (other.gameObject.tag == "Player") {
+			playerScript.playerCaught();
 		}
 	}
 
