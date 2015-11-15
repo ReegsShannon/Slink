@@ -27,8 +27,6 @@ public class EnemyScript : MonoBehaviour {
 		originalPosition = transform.position;
 		navMesh.SetDestination(originalPosition);
 
-		patrolPoints.Add (originalPosition);
-
 		/*if (patrolX) {
 			patrolPoints.Add (new Vector3 (originalPosition.x + patrolDist, originalPosition.y, originalPosition.z));
 			patrolPoints.Add (new Vector3 (originalPosition.x - patrolDist, originalPosition.y, originalPosition.z));
