@@ -30,8 +30,6 @@ public class SpotLightShadow : MonoBehaviour {
 					behavior.numLights++;
 				}
 				playerIsInSpotLight = true; 
-				print("IN THE LIGHT");
-
 			} 
 			else 
 			{
@@ -40,7 +38,6 @@ public class SpotLightShadow : MonoBehaviour {
 					behavior.numLights--;
 				}
 				playerIsInSpotLight = false; 
-				print ("OUT OF THE LIGHT");
 			}
 		} 
 		else 
@@ -50,7 +47,6 @@ public class SpotLightShadow : MonoBehaviour {
 				behavior.numLights--;
 			}
 			playerIsInSpotLight = false; 
-			print ("OUT OF THE LIGHT");
 		}
 	}
 }
