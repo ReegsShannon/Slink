@@ -37,14 +37,61 @@ public class PlayerController : MonoBehaviour {
 	
 	// true if the character is on wall
 	private bool climbing = false;
+
+	/*
+	void Update()
+	{
+		float vinput = Input.GetAxis("Vertical");
+		float hinput = Input.GetAxis("Horizontal");
+		
+		// detect wall with hand
+		RaycastHit handHit = new RaycastHit();
+		DetectHit(ref handHit, hand);
+
+		// detect new wall for climbling
+		if (!this.climbing && handHit.collider != null && Input.GetKey(KeyCode.RightShift))
+		{
+			this.climbing = true;
+			m_Rigidbody.useGravity = false;
+		}
+		// no wall or stop climbing
+		else if (this.climbing && handHit.collider == null || !Input.GetKey(KeyCode.RightShift))
+		{
+			this.climbing = false;
+			m_Rigidbody.useGravity = true;
+		}
+		
+		// Jump
+		if (Input.GetButtonDown("Jump"))
+		{
+			this.climbing = false;
+			m_Rigidbody.useGravity = true;
+			m_Rigidbody.AddForce(0f, 300f, 0f);
+		}
+		
+		// climbling action.
+		if (this.climbing)
+		{
+			m_Rigidbody.velocity = this.transform.up * vinput * 5f + this.transform.right * hinput * 5f;
+			m_Rigidbody.angularVelocity = Vector3.zero;
+			transform.rotation = Quaternion.LookRotation(handHit.normal*-1f);
+		}
+		// walking or jump action
+		else
+		{
+			m_Rigidbody.velocity = m_Rigidbody.velocity.y * this.transform.up + this.transform.forward * vinput * 5f + this.transform.right * hinput * 5f;
+			m_Rigidbody.angularVelocity = new Vector3(0f, hinput * 2f, 0f);
+		}
+	}
+	*/
 	
 	// detect raycat hit
 	void DetectHit(ref RaycastHit detectedHit, Transform transform)
 	{
-		RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.forward, handDistance);
+		RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.forward, this.handDistance);
 		foreach (RaycastHit hit in hits)
 		{
-			if (hit.collider == GetComponent<Collider>())
+			if (hit.collider == this.GetComponent<Collider>())
 				continue;
 			if (hit.collider.isTrigger)
 				continue;
@@ -67,6 +114,18 @@ public class PlayerController : MonoBehaviour {
 
 		hand = transform;
 	}
+
+	/*void OnCollisionStay(Collision coll){
+		if (coll.gameObject.tag == "Wall") {
+			climb = true;
+		}
+	}
+	
+	void OnCollisionExit(Collision coll){
+		if (coll.gameObject.tag == "Wall") {
+			climb = false;
+		}
+	}*/
 	
 	public void Move(Vector3 move, float rotate, bool jump, bool hide)
 	{
@@ -127,13 +186,38 @@ public class PlayerController : MonoBehaviour {
 			m_Rigidbody.velocity = movement;
 			transform.Rotate(transform.up * MoveRotate);
 		}
+
+
 		
+		/*if (climb && numLights == 0 & hide) {
+			m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionZ;
+			m_Rigidbody.useGravity = false;
+			Vector3 movement = MoveSpeed * ((transform.up * move.z) + (transform.right * move.x));
+			movement.z = m_Rigidbody.velocity.z;
+			m_Rigidbody.velocity = movement;
+		} else {
+			m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+			m_Rigidbody.useGravity = true;
+			Vector3 movement = MoveSpeed * ((transform.forward * move.z) + (transform.right * move.x));
+			movement.y = m_Rigidbody.velocity.y;
+			m_Rigidbody.velocity = movement;
+			transform.Rotate(transform.up * MoveRotate);
+		}
+		*/
 		if (slink) {
 			GetComponent<MeshRenderer>().material.color = Color.blue;
 		}
 		else{
 			GetComponent<MeshRenderer>().material.color = Color.red;
 		}
+
+		/*if (jump && m_IsGrounded) {
+			m_Rigidbody.AddForce(Vector3.up * m_jumpSpeed);
+		}
+
+		climb = false;
+		*/
+
 
 	}
 	
@@ -197,6 +281,10 @@ public class PlayerController : MonoBehaviour {
 
 	public void playerCaught() {
 		//send player back to previous checkpoint
+<<<<<<< HEAD
+=======
+		print ("Caught");
+>>>>>>> 7256e93ea8a4dc2861d70ff17eb393b80deabd73
 		CheckPoint.respawn ();
 	}
 
