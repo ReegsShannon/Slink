@@ -169,5 +169,6 @@ public class PlayerController : MonoBehaviour {
 	public void playerCaught() {
 		//send player back to previous checkpoint
 		print ("Caught");
+		CheckPoint.respawn ();
 	}
 }
