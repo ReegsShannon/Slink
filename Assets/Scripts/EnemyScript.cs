@@ -85,7 +85,6 @@ public class EnemyScript : MonoBehaviour {
 			chasingPlayer = true;
 		} else {
 			chasingPlayer = false;
-			StartCoroutine(Patrol ());
 		}
 	}
 
@@ -98,6 +97,8 @@ public class EnemyScript : MonoBehaviour {
 
 	void OnCollisionEnter(Collision other) {
 		if (other.gameObject.tag == "Player") {
+			transform.position = originalPosition;
+			navMesh.SetDestination(originalPosition);
 			playerScript.playerCaught();
 		}
 	}
