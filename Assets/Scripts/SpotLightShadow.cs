@@ -26,11 +26,8 @@ public class SpotLightShadow : MonoBehaviour {
 		var lightToObject = player.transform.position - transform.position;
 		var lightForward = transform.forward;
 		var angleBetween = Vector3.Angle (lightToObject, lightForward);
-		//print (angleBetween + " : " + GetComponent<Light>().spotAngle/2);
-		//Debug.DrawRay(transform.position, lightToObject * range, Color.blue);
 		Debug.DrawLine(transform.position, player.transform.position, Color.blue);
 		if (angleBetween < spotAngle/2 && Physics.Raycast (transform.position, lightToObject, out hit, range, mask.value)){	
-			print ("in Light: " + gameObject.GetInstanceID());
 			if (hit.transform.tag == "Player"){
 				if (!playerIsInSpotLight) {
 					behavior.numLights++;
@@ -38,7 +35,6 @@ public class SpotLightShadow : MonoBehaviour {
 				playerIsInSpotLight = true; 
 			} 
 			else{
-				print ("blocked!: " + gameObject.GetInstanceID() + " " + hit.transform.name);
 				if (playerIsInSpotLight){
 					behavior.numLights--;
 				}
@@ -47,7 +43,6 @@ public class SpotLightShadow : MonoBehaviour {
 		} 
 		else
 		{
-			print ("not in Light: " + gameObject.GetInstanceID());
 			if (playerIsInSpotLight)
 			{
 				behavior.numLights--;
