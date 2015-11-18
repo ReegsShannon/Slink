@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class RotationBehavior : MonoBehaviour {
 
 	public float rotationSpeed   = 20;
 
-	public bool  rotateBehavior;
+	public bool  rotateYBehavior;
+	public bool  rotateXBehavior;
+	public bool  rotateZBehavior;
 	public bool  flickerBehavior;
 	public bool  growBehavior;
 	public bool  randomFlickerBehavior;
@@ -17,6 +20,10 @@ public class RotationBehavior : MonoBehaviour {
 
 	public float timer = 0;
 	public float growingLightTimer = 0;
+
+	public float timeLength = 2;
+
+	bool increasing = true;
 	
 	// Use this for initialization
 	void Start () 
@@ -27,9 +34,25 @@ public class RotationBehavior : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		if (rotateBehavior) 
+		if (Math.Abs (timer) > timeLength / 2) {
+			increasing = !increasing;
+			timer = Math.Sign(timer) * (timeLength/2);
+		}
+		if (increasing)
+			timer += Time.deltaTime;
+		else 
+			timer -= Time.deltaTime;
+		if (rotateYBehavior) 
 		{
-			RotatingLightBehavior();
+			RotatingLightYBehavior();
+		}
+		if (rotateXBehavior) 
+		{
+			RotatingLightXBehavior();
+		}
+		if (rotateZBehavior) 
+		{
+			RotatingLightZBehavior();
 		}
 		if (randomRotateBehavior) 
 		{
@@ -43,7 +66,6 @@ public class RotationBehavior : MonoBehaviour {
 		{
 			RandomFlickeringLightBehavior();
 		}
-		timer += Time.deltaTime; 
 	}
 
 	void FixedUpdate()
@@ -58,25 +80,57 @@ public class RotationBehavior : MonoBehaviour {
 		}
 	}
 
-	public void RotatingLightBehavior()
+	public void RotatingLightYBehavior()
 	{
-		if ((int)timer % 2 == 0) 
+		if (increasing) 
 		{
 			transform.RotateAround (transform.position, 
 		                        new Vector3 (1, 0, 0),
-		                        Time.fixedDeltaTime * rotationSpeed);
+		                        Time.deltaTime * rotationSpeed);
 		} 
 		else 
 		{
 			transform.RotateAround (transform.position, 
 			                        new Vector3 (-1, 0, 0),
-			                        Time.fixedDeltaTime * rotationSpeed);
+			                        Time.deltaTime * rotationSpeed);
+		}
+	}
+
+	public void RotatingLightZBehavior()
+	{
+		if (increasing)  
+		{
+			transform.RotateAround (transform.position, 
+			                        new Vector3 (0, 1, 0),
+			                        Time.deltaTime * rotationSpeed);
+		} 
+		else 
+		{
+			transform.RotateAround (transform.position, 
+			                        new Vector3 (0, -1, 0),
+			                        Time.deltaTime * rotationSpeed);
+		}
+	}
+
+	public void RotatingLightXBehavior()
+	{
+		if (increasing)  
+		{
+			transform.RotateAround (transform.position, 
+			                        new Vector3 (0, 0, 1),
+			                        Time.deltaTime * rotationSpeed);
+		} 
+		else 
+		{
+			transform.RotateAround (transform.position, 
+			                        new Vector3 (0, 0, -1),
+			                        Time.deltaTime * rotationSpeed);
 		}
 	}
 
 	public void FlickeringLightBehavior()
 	{
-		if ((int)timer % 3 == 0)
+		if (increasing) 
 		{
 			spotLight.intensity = 1;
 		}
@@ -109,7 +163,7 @@ public class RotationBehavior : MonoBehaviour {
 
 	public void RandomGrowthLightBehavior()
 	{
-		if ((int)timer % 2 == 0) 
+		if (increasing) 
 		{
 			growingLightTimer += Time.fixedDeltaTime;
 			int growingTimerCast = (int)growingLightTimer;
@@ -131,7 +185,7 @@ public class RotationBehavior : MonoBehaviour {
 
 	public void RandomFlickeringLightBehavior()
 	{
-		if ((int)timer % 3 == 0 && Random.value > 0.5)  
+		if (increasing && UnityEngine.Random.value > 0.5)  
 		{
 			spotLight.intensity = 1;
 		} 
@@ -143,7 +197,7 @@ public class RotationBehavior : MonoBehaviour {
 
 	public void RandomRotateLightBehavior()
 	{
-		if ((int)timer % 2 == 0) 
+		if (increasing) 
 		{
 			transform.RotateAround (transform.position, 
 			                        new Vector3 (0, 0, 1),

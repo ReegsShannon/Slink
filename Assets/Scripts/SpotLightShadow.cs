@@ -10,10 +10,11 @@ public class SpotLightShadow : MonoBehaviour {
 	float spotAngle;
 	float playerHeight;
 
-	public LayerMask mask = -1;
+	public LayerMask mask;
 
 	// Use this for initialization
 	void Start () {
+		player = GameObject.FindGameObjectWithTag ("Player");
 		range = gameObject.GetComponent<Light>().range;
 		behavior = player.GetComponent<PlayerController> ();
 		spotAngle = GetComponent<Light> ().spotAngle;
