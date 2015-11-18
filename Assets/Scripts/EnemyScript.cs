@@ -41,7 +41,6 @@ public class EnemyScript : MonoBehaviour {
 	void Update () {
 		if (!waiting && !chasingPlayer) {
 			toDest = Vector3.Distance (transform.position, navMesh.destination);
-			print (toDest);
 
 			if(toDest < 0.5f)
 				StartCoroutine(Patrol ());
@@ -56,7 +55,6 @@ public class EnemyScript : MonoBehaviour {
 	}
 
 	void GoToNextPoint() {
-		print ("Going to next point");
 
 		if (patrolPoints.Count <= 1)
 			navMesh.SetDestination (originalPosition);
