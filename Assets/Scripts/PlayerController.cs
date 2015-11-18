@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour {
 	Vector3 m_GroundNormal;
 
 	public int numLights = 0;
-	public float slinkMoveSpeed = 6f;
+	public float slinkMoveSpeed = 4f;
 
 	GameObject slinkIndicator;
 	MeshRenderer playerRenderer;
@@ -92,7 +92,7 @@ public class PlayerController : MonoBehaviour {
 		RaycastHit handHit = new RaycastHit();
 		DetectHit(ref handHit, hand);
 		
-		float MoveSpeed = hide ? slinkMoveSpeed : 4f;
+		float MoveSpeed = hide ? slinkMoveSpeed : 3f;
 		float RotateSpeed = 120;
 		float MoveRotate = rotate * RotateSpeed * Time.deltaTime;
 
@@ -135,37 +135,6 @@ public class PlayerController : MonoBehaviour {
 			GetComponent<MeshRenderer>().material.color = Color.red;
 		}
 
-	}
-	
-	void HandleAirborneMovement()
-	{
-		// apply extra gravity from multiplier:
-		Vector3 extraGravityForce = (Physics.gravity * m_GravityMultiplier) - Physics.gravity;
-		m_Rigidbody.AddForce(extraGravityForce);
-		
-		m_GroundCheckDistance = m_Rigidbody.velocity.y < 0 ? m_OrigGroundCheckDistance : 0.51f;
-	}
-	
-	
-	void HandleGroundedMovement(bool crouch, bool jump)
-	{
-		// check whether conditions are right to allow a jump:
-		if (jump && !crouch && m_IsGrounded)
-		{
-			// jump!
-			m_Rigidbody.velocity = new Vector3(m_Rigidbody.velocity.x, m_JumpPower, m_Rigidbody.velocity.z);
-			m_IsGrounded = false;
-			//m_Animator.applyRootMotion = false;
-			m_GroundCheckDistance = 0.6f;
-		}
-
-	}
-	
-	void ApplyExtraTurnRotation()
-	{
-		// help the character turn faster (this is in addition to root rotation in the animation)
-		float turnSpeed = Mathf.Lerp(m_StationaryTurnSpeed, m_MovingTurnSpeed, m_ForwardAmount);
-		transform.Rotate(0, m_TurnAmount * turnSpeed * Time.deltaTime, 0);
 	}
 	
 	void CheckGroundStatus()
