@@ -15,16 +15,6 @@ public class CheckPoint : MonoBehaviour {
 		}
 	}
 
-	/*static CheckPoint(){
-		player = GameObject.FindGameObjectWithTag ("Player");
-		if (player != null) {
-			respawnSpot = player.transform.position;
-		} else {
-			respawnSpot = Vector3.zero;
-		}
-	}
-	*/
-	
 	public static void respawn(){
 		player.transform.position = respawnSpot;
 	}
@@ -32,9 +22,5 @@ public class CheckPoint : MonoBehaviour {
 	void OnTriggerEnter(Collider coll){
 		if(player.GetInstanceID() == coll.gameObject.GetInstanceID())
 			respawnSpot = player.transform.position;
-	}
-	
-	void Update(){
-		print (respawnSpot);
 	}
 }
