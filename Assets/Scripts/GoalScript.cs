@@ -24,11 +24,12 @@ public class GoalScript : MonoBehaviour {
 		}
 
 		//if player hits start/enter while paused, move on to next level
-		/*if (Input.GetKeyDown(KeyCode.Return)) {
-		 * 		if(paused) {
-		 * 			Application.LoadLevel(levelToLoad);
-		 * 		}
-		 * }*/
+		if (Input.GetKeyDown(KeyCode.Return)) {
+			if(paused) {
+				Time.timeScale = 1;
+				Application.LoadLevel(levelToLoad);
+			}
+		}
 	}
 
 	void OnTriggerEnter(Collider other) {
