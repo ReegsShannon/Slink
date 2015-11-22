@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour {
 	public int numLights = 0;
 	public float slinkMoveSpeed = 4f;
 
+	GameObject playerIndicator;
 	GameObject slinkIndicator;
 	MeshRenderer playerRenderer;
 	Collider playerCollider;
@@ -56,6 +57,9 @@ public class PlayerController : MonoBehaviour {
 	void Start()
 	{
 		m_Rigidbody = GetComponent<Rigidbody>();
+		//playerIndicator = GameObject.Find ("NormalPlayer");
+		//playerRenderer = playerIndicator.GetComponent<MeshRenderer> ();
+		//playerCollider = playerIndicator.GetComponent<Collider> ();
 		playerRenderer = GetComponent<MeshRenderer> ();
 		playerCollider = GetComponent<Collider> ();
 		slinkIndicator = GameObject.Find ("SlinkingPlayer");
@@ -126,13 +130,6 @@ public class PlayerController : MonoBehaviour {
 			movement.y = m_Rigidbody.velocity.y;
 			m_Rigidbody.velocity = movement;
 			transform.Rotate(transform.up * MoveRotate);
-		}
-		
-		if (slink) {
-			GetComponent<MeshRenderer>().material.color = Color.blue;
-		}
-		else{
-			GetComponent<MeshRenderer>().material.color = Color.red;
 		}
 
 	}

@@ -28,7 +28,6 @@ public class SpotLightShadow : MonoBehaviour {
 		var angleBetween = Vector3.Angle (lightToObject, lightForward);
 		Debug.DrawLine(transform.position, player.transform.position, Color.blue);
 		if (angleBetween < spotAngle/2 && Physics.Raycast (transform.position, lightToObject, out hit, range, mask.value)){	
-			print (hit.transform.name);
 			if (hit.transform.tag == "Player"){
 				if (!playerIsInSpotLight) {
 					behavior.numLights++;
