@@ -30,14 +30,19 @@ public class PlayerController : MonoBehaviour {
 	MeshRenderer slinkRenderer;
 	BoxCollider slinkCollider;
 
-	bool climb = false;
-
 	// Sense wall
 	public Transform hand;
 	public float handDistance = 0.2f;
 	
 	// true if the character is on wall
-	private bool climbing = false;
+	public bool climbing = false;
+
+	public Transform camPoint;
+	public Vector3 camLocalPos;
+
+	public float u = 0.1f;
+	public float camShiftRight = 8;
+	public float camShiftForward = -8;
 	
 	// detect raycat hit
 	void DetectHit(ref RaycastHit detectedHit, Transform transform)
@@ -70,6 +75,9 @@ public class PlayerController : MonoBehaviour {
 		m_OrigGroundCheckDistance = m_GroundCheckDistance;
 
 		hand = transform;
+
+		camPoint = GameObject.Find ("CamTarget").transform;
+		camLocalPos = camPoint.localPosition;
 	}
 	
 	public void Move(Vector3 move, float rotate, bool jump, bool hide)
@@ -123,9 +131,29 @@ public class PlayerController : MonoBehaviour {
 			m_Rigidbody.velocity = MoveSpeed * ((transform.up * move.z) + (transform.right * move.x));
 			m_Rigidbody.angularVelocity = Vector3.zero;
 			transform.rotation = Quaternion.LookRotation(handHit.normal*-1f);
+
+			if(Mathf.Approximately(move.x, 0f)){
+				Vector3 pos = camLocalPos + Vector3.forward * camShiftForward;
+				Vector3 pos2 = (1-u)*camPoint.localPosition + u*pos;
+				camPoint.localPosition = pos2;
+			}else if(move.x > 0f){
+				Vector3 pos = camLocalPos + Vector3.right * camShiftRight + Vector3.forward * camShiftForward;
+				Vector3 pos2 = (1-u)*camPoint.localPosition + u*pos;
+				camPoint.localPosition = pos2;
+			}
+			else{
+				Vector3 pos = camLocalPos - Vector3.right * camShiftRight + Vector3.forward * camShiftForward;
+				Vector3 pos2 = (1-u)*camPoint.localPosition + u*pos;
+				camPoint.localPosition = pos2;
+			}
+
 		}
 		// walking or jump action
 		else{
+			float u = 0.1f;
+			Vector3 pos = camLocalPos;
+			Vector3 pos2 = (1-u)*camPoint.localPosition + u*pos;
+			camPoint.localPosition = pos2;
 			Vector3 movement = MoveSpeed * ((transform.forward * move.z) + (transform.right * move.x));
 			movement.y = m_Rigidbody.velocity.y;
 			m_Rigidbody.velocity = movement;
