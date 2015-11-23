@@ -132,17 +132,17 @@ public class PlayerController : MonoBehaviour {
 			m_Rigidbody.angularVelocity = Vector3.zero;
 			transform.rotation = Quaternion.LookRotation(handHit.normal*-1f);
 
-			if(Mathf.Approximately(move.x, 0f)){
-				Vector3 pos = camLocalPos + Vector3.forward * camShiftForward;
-				Vector3 pos2 = (1-u)*camPoint.localPosition + u*pos;
-				camPoint.localPosition = pos2;
-			}else if(move.x > 0f){
+			if(move.x > .2f){
 				Vector3 pos = camLocalPos + Vector3.right * camShiftRight + Vector3.forward * camShiftForward;
 				Vector3 pos2 = (1-u)*camPoint.localPosition + u*pos;
 				camPoint.localPosition = pos2;
 			}
-			else{
+			else if(move.x < -.2f){
 				Vector3 pos = camLocalPos - Vector3.right * camShiftRight + Vector3.forward * camShiftForward;
+				Vector3 pos2 = (1-u)*camPoint.localPosition + u*pos;
+				camPoint.localPosition = pos2;
+			}else{
+				Vector3 pos = camLocalPos + Vector3.forward * camShiftForward;
 				Vector3 pos2 = (1-u)*camPoint.localPosition + u*pos;
 				camPoint.localPosition = pos2;
 			}

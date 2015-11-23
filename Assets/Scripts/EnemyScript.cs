@@ -56,8 +56,10 @@ public class EnemyScript : MonoBehaviour {
 
 	void GoToNextPoint() {
 
-		if (patrolPoints.Count <= 1)
+		if (patrolPoints.Count <= 1) {
 			navMesh.SetDestination (originalPosition);
+			return;
+		}
 
 		navMesh.SetDestination (patrolPoints [nextDest]);
 

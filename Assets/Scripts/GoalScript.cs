@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using InControl;
 
 public class GoalScript : MonoBehaviour {
 
@@ -24,7 +25,8 @@ public class GoalScript : MonoBehaviour {
 		}
 
 		//if player hits start/enter while paused, move on to next level
-		if (Input.GetKeyDown(KeyCode.Return)) {
+		InputDevice device = InputManager.ActiveDevice;
+		if (Input.GetKeyDown(KeyCode.Return) || device.MenuWasPressed) {
 			if(paused) {
 				Time.timeScale = 1;
 				Application.LoadLevel(levelToLoad);
