@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using UnityStandardAssets.CrossPlatformInput;
 
@@ -48,6 +49,7 @@ public class PlayerController : MonoBehaviour {
 	public float slinkRate = 25f; //rate at which slink meter is used up/regained
 
 	//slink bar canvas objects
+	public Slider slinkSlider;
 	
 	// detect raycat hit
 	void DetectHit(ref RaycastHit detectedHit, Transform transform)
@@ -88,21 +90,27 @@ public class PlayerController : MonoBehaviour {
 	void Update() {
 		if (isSlinking ()) {
 			slinkMeter -= slinkRate * Time.deltaTime;
+			if (slinkMeter < 0f) {
+				slinkMeter = 0f;
+			}
 		} else {
 			slinkMeter += slinkRate * Time.deltaTime;
+			if (slinkMeter > 100f) {
+				slinkMeter = 100f;
+			}
 		}
 
-		if (slinkMeter > 100f) {
-			slinkMeter = 100f;
-		} else if (slinkMeter < 0f) {
-			slinkMeter = 0f;
-		}
+		slinkSlider.value = slinkMeter;
 	}
 	
 	public void Move(Vector3 move, float rotate, bool jump, bool hide)
 	{
 		bool slink = false;
-		if(hide && numLights == 0) slink = true;		
+		if(hide && numLights == 0) slink = true;
+
+		//if slink meter is empty, disable slinking
+		if (slinkMeter <= 0)
+			slink = false;
 
 		if (slink) {
 			playerRenderer.enabled = false;
