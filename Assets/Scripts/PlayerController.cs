@@ -43,6 +43,11 @@ public class PlayerController : MonoBehaviour {
 	public float u = 0.1f;
 	public float camShiftRight = 8;
 	public float camShiftForward = -8;
+
+	public float slinkMeter = 100f;
+	public float slinkRate = 25f; //rate at which slink meter is used up/regained
+
+	//slink bar canvas objects
 	
 	// detect raycat hit
 	void DetectHit(ref RaycastHit detectedHit, Transform transform)
@@ -78,6 +83,20 @@ public class PlayerController : MonoBehaviour {
 
 		camPoint = GameObject.Find ("CamTarget").transform;
 		camLocalPos = camPoint.localPosition;
+	}
+
+	void Update() {
+		if (isSlinking ()) {
+			slinkMeter -= slinkRate * Time.deltaTime;
+		} else {
+			slinkMeter += slinkRate * Time.deltaTime;
+		}
+
+		if (slinkMeter > 100f) {
+			slinkMeter = 100f;
+		} else if (slinkMeter < 0f) {
+			slinkMeter = 0f;
+		}
 	}
 	
 	public void Move(Vector3 move, float rotate, bool jump, bool hide)
