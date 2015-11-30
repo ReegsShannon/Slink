@@ -50,6 +50,8 @@ public class PlayerController : MonoBehaviour {
 
 	//slink bar canvas objects
 	public Slider slinkSlider;
+
+	public LayerMask mask;
 	
 	// detect raycat hit
 	void DetectHit(ref RaycastHit detectedHit, Transform transform)
@@ -147,7 +149,7 @@ public class PlayerController : MonoBehaviour {
 		}
 		
 		// Jump
-		if (jump && (m_IsGrounded || slink)) {
+		if (jump && m_IsGrounded) {
 			m_Rigidbody.AddForce(Vector3.up * m_jumpSpeed);
 			climbing = false;
 			m_Rigidbody.useGravity = true;
@@ -198,8 +200,9 @@ public class PlayerController : MonoBehaviour {
 		#endif
 		// 0.1f is a small offset to start the ray from inside the character
 		// it is also good to note that the transform position in the sample assets is at the base of the character
-		if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), Vector3.down, out hitInfo, m_GroundCheckDistance))
+		if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), Vector3.down, out hitInfo, m_GroundCheckDistance,mask))
 		{
+			print (hitInfo.transform.tag);
 			m_GroundNormal = hitInfo.normal;
 			m_IsGrounded = true;
 			//m_Animator.applyRootMotion = true;
