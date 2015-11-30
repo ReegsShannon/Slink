@@ -50,6 +50,10 @@ public class PlayerController : MonoBehaviour {
 
 	//slink bar canvas objects
 	public Slider slinkSlider;
+	public Image fill;
+	public bool onCooldown = false;
+	public Color cooldownColor = Color.red;
+	public Color normalColor = Color.white;
 
 	public LayerMask mask;
 	
@@ -94,11 +98,18 @@ public class PlayerController : MonoBehaviour {
 			slinkMeter -= slinkRate * Time.deltaTime;
 			if (slinkMeter < 0f) {
 				slinkMeter = 0f;
+				onCooldown = true;
+				//set color of bar to red
+				fill.color = cooldownColor;
 			}
 		} else {
 			slinkMeter += slinkRate * Time.deltaTime;
 			if (slinkMeter > 100f) {
 				slinkMeter = 100f;
+			} else if(slinkMeter > 25f && onCooldown) {
+				onCooldown = false;
+				//re-set color of bar to gray
+				fill.color = normalColor;
 			}
 		}
 
@@ -108,7 +119,7 @@ public class PlayerController : MonoBehaviour {
 	public void Move(Vector3 move, float rotate, bool jump, bool hide)
 	{
 		bool slink = false;
-		if(hide && numLights == 0) slink = true;
+		if(hide && numLights == 0 && !onCooldown) slink = true;
 
 		//if slink meter is empty, disable slinking
 		if (slinkMeter <= 0)
