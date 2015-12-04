@@ -94,6 +94,11 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Update() {
+		if (Input.GetKeyDown (KeyCode.R)) {
+			CheckPoint.respawn();
+			m_Rigidbody.velocity = Vector3.zero;
+		}
+
 		if (isSlinking ()) {
 			slinkMeter -= slinkRate * Time.deltaTime;
 			if (slinkMeter < 0f) {
@@ -233,6 +238,7 @@ public class PlayerController : MonoBehaviour {
 	public void playerCaught() {
 		//send player back to previous checkpoint
 		CheckPoint.respawn ();
+		m_Rigidbody.velocity = Vector3.zero;
 	}
 
 }
