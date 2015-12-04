@@ -3,16 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class StartScreen : MonoBehaviour {
-
-	public enum GameOptions
+public class LevelSelect : MonoBehaviour {
+	
+	public enum FighterOptions
 	{
-		STARTGAME,
-		LEVELSELECT,
-		QUITGAME
+		ONE,
+		TWO,
+		THREE,
+		FOUR,
+		FIVE,
+		SIX,
+		SEVEN
 	}
 	
-	public static StartScreen S;
+	public static LevelSelect S;
 	public int                activeItem;
 	public List<GameObject>   menuItems;
 	public Color              highlight = Color.black;
@@ -42,6 +46,7 @@ public class StartScreen : MonoBehaviour {
 			if(first) itemText.color = highlight;
 			first = false;
 		}
+		
 	}
 	
 	// Update is called once per frame
@@ -51,18 +56,27 @@ public class StartScreen : MonoBehaviour {
 		{
 			switch(activeItem)
 			{
-			case (int)GameOptions.STARTGAME:
+			case (int)FighterOptions.ONE:
 				Application.LoadLevel("_level_1");
 				break;
-			case (int)GameOptions.LEVELSELECT:
-				print ("select level");
-				Application.LoadLevel("_select_level");
+			case (int)FighterOptions.TWO:
+				Application.LoadLevel("_level_2");
 				break;
-			case (int)GameOptions.QUITGAME:
-				Application.Quit();
-				print ("quit game");
+			case (int)FighterOptions.THREE:
+				Application.LoadLevel("_level_3");
 				break;
-			
+			case (int)FighterOptions.FOUR:
+				Application.LoadLevel("_level_4");
+				break;
+			case (int)FighterOptions.FIVE:
+				Application.LoadLevel("_level_5");
+				break;
+			case (int)FighterOptions.SIX:
+				Application.LoadLevel("_level_6");
+				break;
+			case (int)FighterOptions.SEVEN:
+				Application.LoadLevel("_level_7");
+				break;
 			}
 		}
 		if (Input.GetKeyDown (KeyCode.DownArrow)) 
