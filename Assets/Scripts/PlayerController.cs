@@ -123,8 +123,11 @@ public class PlayerController : MonoBehaviour {
 	
 	public void Move(Vector3 move, float rotate, bool jump, bool hide)
 	{
+		CheckGroundStatus();
+		RaycastHit handHit = new RaycastHit();
+		DetectHit(ref handHit, hand);
 		bool slink = false;
-		if(hide && numLights == 0 && !onCooldown) slink = true;
+		if(hide && numLights == 0 && !onCooldown && (m_IsGrounded || handHit.collider != null)) slink = true;
 
 		//if slink meter is empty, disable slinking
 		if (slinkMeter <= 0)
@@ -143,13 +146,8 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		transform.rotation = Quaternion.Euler(0,transform.eulerAngles.y,0);
-		
-		CheckGroundStatus();
 
-		RaycastHit handHit = new RaycastHit();
-		DetectHit(ref handHit, hand);
-		
-		float MoveSpeed = hide ? slinkMoveSpeed : 3f;
+		float MoveSpeed = slink ? slinkMoveSpeed : 3f;
 		float RotateSpeed = 120;
 		float MoveRotate = rotate * RotateSpeed * Time.deltaTime;
 
