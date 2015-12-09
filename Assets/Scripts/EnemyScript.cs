@@ -5,8 +5,8 @@ using System.Collections.Generic;
 public class EnemyScript : MonoBehaviour {
 
 	public List<Vector3> patrolPoints = new List<Vector3> ();
-	public float patrolDist;
-	public bool patrolX;
+	public GameObject[] allEnemies;
+	public float waitTime = 2f;
 	public bool chasingPlayer = false;
 	public int nextDest = 0;
 
@@ -23,17 +23,11 @@ public class EnemyScript : MonoBehaviour {
 		navMesh = GetComponent<NavMeshAgent> ();
 		player = GameObject.FindGameObjectWithTag ("Player");
 		playerScript = player.GetComponent<PlayerController> ();
+		allEnemies = GameObject.FindGameObjectsWithTag ("Enemy");
 
 		originalPosition = transform.position;
 		navMesh.SetDestination(originalPosition);
 
-		/*if (patrolX) {
-			patrolPoints.Add (new Vector3 (originalPosition.x + patrolDist, originalPosition.y, originalPosition.z));
-			patrolPoints.Add (new Vector3 (originalPosition.x - patrolDist, originalPosition.y, originalPosition.z));
-		} else {
-			patrolPoints.Add(new Vector3(originalPosition.x,originalPosition.y,originalPosition.z+patrolDist));
-			patrolPoints.Add(new Vector3(originalPosition.x,originalPosition.y,originalPosition.z-patrolDist));
-		}*/
 		StartCoroutine (Patrol ());
 	}
 	
@@ -49,7 +43,7 @@ public class EnemyScript : MonoBehaviour {
 
 	IEnumerator Patrol () {
 		waiting = true;
-		yield return new WaitForSeconds (2);
+		yield return new WaitForSeconds (waitTime);
 		GoToNextPoint ();
 		waiting = false;
 	}
@@ -67,6 +61,7 @@ public class EnemyScript : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
+
 		if (other.tag != "Player")
 			return;
 
@@ -95,16 +90,17 @@ public class EnemyScript : MonoBehaviour {
 		}
 	}
 
-	void OnCollisionEnter(Collision other) {
-		if (other.gameObject.tag == "Player") {
-			transform.position = originalPosition;
-			navMesh.SetDestination(originalPosition);
-			playerScript.playerCaught();
-		}
+	public void resetEnemy() {
+		transform.position = originalPosition;
+		navMesh.SetDestination (originalPosition);
 	}
 
-	public void setValues(float patrolDist_in = 0, bool patrolDir_in = true) {
-		patrolDist = patrolDist_in;
-		patrolX = patrolDir_in;
+	void OnCollisionEnter(Collision other) {
+		if (other.gameObject.tag == "Player") {
+			foreach (GameObject enemy in allEnemies) {
+				enemy.GetComponent<EnemyScript>().resetEnemy();
+			}
+			playerScript.playerCaught();
+		}
 	}
 }
