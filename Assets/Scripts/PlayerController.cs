@@ -5,21 +5,12 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class PlayerController : MonoBehaviour {
 
-	[SerializeField] float m_MovingTurnSpeed = 360;
-	[SerializeField] float m_StationaryTurnSpeed = 180;
-	[SerializeField] float m_JumpPower = 12f;
-	[Range(1f, 4f)][SerializeField] float m_GravityMultiplier = 2f;
-	[SerializeField] float m_GroundCheckDistance = 0.7f;
+	[SerializeField] float m_GroundCheckDistance = 0.2f;
 	[SerializeField] float m_jumpSpeed = 250;
 
 	
 	Rigidbody m_Rigidbody;
 	public bool m_IsGrounded;
-	float m_OrigGroundCheckDistance;
-	const float k_Half = 0.5f;
-	float m_TurnAmount;
-	float m_ForwardAmount;
-	Vector3 m_GroundNormal;
 
 	public int numLights = 0;
 	public float slinkMoveSpeed = 4f;
@@ -33,7 +24,7 @@ public class PlayerController : MonoBehaviour {
 
 	// Sense wall
 	public Transform hand;
-	public float handDistance = 0.2f;
+	public float handDistance = 0.3f;
 	
 	// true if the character is on wall
 	public bool climbing = false;
@@ -42,8 +33,8 @@ public class PlayerController : MonoBehaviour {
 	public Vector3 camLocalPos;
 
 	public float u = 0.1f;
-	public float camShiftRight = 8;
-	public float camShiftForward = -8;
+	public float camShiftRight = 2;
+	public float camShiftForward = -2;
 
 	public float slinkMeter = 100f;
 	public float slinkRate = 25f; //rate at which slink meter is used up/regained
@@ -56,6 +47,10 @@ public class PlayerController : MonoBehaviour {
 	public Color normalColor = Color.white;
 
 	public LayerMask mask;
+
+	Transform meshTransform;
+	public float shrinkSpeed = 4f;
+	public float shrinkScale = .01f;
 	
 	// detect raycat hit
 	void DetectHit(ref RaycastHit detectedHit, Transform transform)
@@ -75,17 +70,17 @@ public class PlayerController : MonoBehaviour {
 	void Start()
 	{
 		m_Rigidbody = GetComponent<Rigidbody>();
+		meshTransform = GameObject.Find ("NormalPlayer").transform;
 		//playerIndicator = GameObject.Find ("NormalPlayer");
 		//playerRenderer = playerIndicator.GetComponent<MeshRenderer> ();
 		//playerCollider = playerIndicator.GetComponent<Collider> ();
-		playerRenderer = GetComponent<MeshRenderer> ();
-		playerCollider = GetComponent<Collider> ();
-		slinkIndicator = GameObject.Find ("SlinkingPlayer");
-		slinkRenderer = slinkIndicator.GetComponent<MeshRenderer> ();
-		slinkCollider = slinkIndicator.GetComponent<BoxCollider> ();
+		//playerRenderer = GetComponent<MeshRenderer> ();
+		//playerCollider = GetComponent<Collider> ();
+		//slinkIndicator = GameObject.Find ("SlinkingPlayer");
+		//slinkRenderer = slinkIndicator.GetComponent<MeshRenderer> ();
+		//slinkCollider = slinkIndicator.GetComponent<BoxCollider> ();
 		
 		m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
-		m_OrigGroundCheckDistance = m_GroundCheckDistance;
 
 		hand = transform;
 
@@ -94,6 +89,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Update() {
+		bool shrinking = false;
 		if (Input.GetKeyDown (KeyCode.R)) {
 			CheckPoint.respawn();
 			m_Rigidbody.velocity = Vector3.zero;
@@ -134,15 +130,37 @@ public class PlayerController : MonoBehaviour {
 			slink = false;
 
 		if (slink) {
-			playerRenderer.enabled = false;
-			playerCollider.enabled = false;
-			slinkRenderer.enabled = true;
-			slinkCollider.enabled = true;
+			if (meshTransform.localScale.y < shrinkScale){
+				meshTransform.localScale = new Vector3(1, shrinkScale, 1);
+			}else if(meshTransform.localScale.y > shrinkScale){
+				meshTransform.localScale -= new Vector3(0,1,0) * Time.deltaTime * shrinkSpeed;
+				if (meshTransform.localScale.y < shrinkScale)
+					meshTransform.localScale = new Vector3(1, shrinkScale, 1);
+			}
 		} else {
-			slinkRenderer.enabled = false;
-			slinkCollider.enabled = false;
-			playerRenderer.enabled = true;
-			playerCollider.enabled = true;
+			if (meshTransform.localScale.y < 1){
+				meshTransform.localScale += new Vector3(0,1,0) * Time.deltaTime * shrinkSpeed;
+				if(meshTransform.localScale.y > 1)
+					meshTransform.localScale = new Vector3(1,1,1);
+			}
+			else if(meshTransform.localScale.y > 1)
+				meshTransform.localScale = new Vector3(1,1,1);
+		}
+
+		if (!Mathf.Approximately (meshTransform.localScale.y, shrinkScale))
+			slink = false;
+
+
+		if (slink) {
+			//playerRenderer.enabled = false;
+			//playerCollider.enabled = false;
+			//slinkRenderer.enabled = true;
+			//slinkCollider.enabled = true;
+		} else {
+			//slinkRenderer.enabled = false;
+			//slinkCollider.enabled = false;
+			//playerRenderer.enabled = true;
+			//playerCollider.enabled = true;
 		}
 
 		transform.rotation = Quaternion.Euler(0,transform.eulerAngles.y,0);
@@ -205,31 +223,18 @@ public class PlayerController : MonoBehaviour {
 
 	}
 	
-	void CheckGroundStatus()
-	{
+	void CheckGroundStatus(){
 		RaycastHit hitInfo;
-		#if UNITY_EDITOR
-		// helper to visualise the ground check ray in the scene view
-		Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + (Vector3.down * m_GroundCheckDistance));
-		#endif
-		// 0.1f is a small offset to start the ray from inside the character
-		// it is also good to note that the transform position in the sample assets is at the base of the character
-		if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), Vector3.down, out hitInfo, m_GroundCheckDistance,mask))
-		{
-			m_GroundNormal = hitInfo.normal;
+		if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), Vector3.down, out hitInfo, m_GroundCheckDistance,mask)){
 			m_IsGrounded = true;
-			//m_Animator.applyRootMotion = true;
 		}
-		else
-		{
+		else{
 			m_IsGrounded = false;
-			m_GroundNormal = Vector3.up;
-			//m_Animator.applyRootMotion = false;
 		}
 	}
 
 	public bool isSlinking() {
-		return slinkIndicator.GetComponent<MeshRenderer> ().enabled;
+		return Mathf.Approximately (meshTransform.localScale.y, shrinkScale);
 	}
 
 	public void playerCaught() {

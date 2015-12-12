@@ -14,7 +14,7 @@ public class SpotLightShadow : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		player = GameObject.FindGameObjectWithTag ("Player");
+		player = GameObject.Find ("Player");
 		range = gameObject.GetComponent<Light>().range;
 		behavior = player.GetComponent<PlayerController> ();
 		spotAngle = GetComponent<Light> ().spotAngle;

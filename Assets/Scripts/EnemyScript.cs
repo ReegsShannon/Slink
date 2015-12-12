@@ -21,7 +21,7 @@ public class EnemyScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		navMesh = GetComponent<NavMeshAgent> ();
-		player = GameObject.FindGameObjectWithTag ("Player");
+		player = GameObject.Find("Player");
 		playerScript = player.GetComponent<PlayerController> ();
 		allEnemies = GameObject.FindGameObjectsWithTag ("Enemy");
 

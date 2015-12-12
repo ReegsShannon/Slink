@@ -7,7 +7,7 @@ public class CheckPoint : MonoBehaviour {
 	static Vector3 respawnSpot;
 
 	void Awake(){
-		player = GameObject.FindGameObjectWithTag ("Player");
+		player = GameObject.Find("Player");
 		if (player != null) {
 			respawnSpot = player.transform.position;
 		} else {
@@ -18,9 +18,9 @@ public class CheckPoint : MonoBehaviour {
 	public static void respawn(){
 		player.transform.position = respawnSpot;
 	}
-	
+
 	void OnTriggerEnter(Collider coll){
-		if(player.GetInstanceID() == coll.gameObject.GetInstanceID())
+		if(player.GetInstanceID() == coll.transform.parent.gameObject.GetInstanceID())
 			respawnSpot = player.transform.position;
 	}
 }
