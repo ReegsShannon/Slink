@@ -93,12 +93,11 @@ public class PlayerController : MonoBehaviour {
 				slinkMeter = 100f;
 			} else if(slinkMeter > 25f && onCooldown) {
 				onCooldown = false;
-				//re-set color of bar to gray
+				//reset color of bar to gray
 				fill.color = normalColor;
 			}
 		}
-		print (fill.color.ToString());
-		print (normalColor.ToString());
+
 		slinkSlider.value = slinkMeter;
 	}
 	
