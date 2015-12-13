@@ -64,13 +64,13 @@ public class LevelSelect : MonoBehaviour {
 				Application.LoadLevel("_level_1");
 				break;
 			case (int)FighterOptions.TWO:
-				Application.LoadLevel("_level_3");
-				break;
-			case (int)FighterOptions.THREE:
 				Application.LoadLevel("_level_4");
 				break;
-			case (int)FighterOptions.FOUR:
+			case (int)FighterOptions.THREE:
 				Application.LoadLevel("_level_5");
+				break;
+			case (int)FighterOptions.FOUR:
+				Application.LoadLevel("_level_6");
 				break;
 			case (int)FighterOptions.FIVE:
 				Application.LoadLevel("_level_6");
