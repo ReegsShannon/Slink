@@ -8,22 +8,14 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] float m_GroundCheckDistance = 0.2f;
 	[SerializeField] float m_jumpSpeed = 250;
 
-	
 	Rigidbody m_Rigidbody;
 	public bool m_IsGrounded;
 
 	public int numLights = 0;
 	public float slinkMoveSpeed = 4f;
 
-	GameObject playerIndicator;
-	GameObject slinkIndicator;
-	MeshRenderer playerRenderer;
-	Collider playerCollider;
-	MeshRenderer slinkRenderer;
-	BoxCollider slinkCollider;
-
 	// Sense wall
-	public Transform hand;
+	Transform hand;
 	public float handDistance = 0.3f;
 	
 	// true if the character is on wall
@@ -71,14 +63,6 @@ public class PlayerController : MonoBehaviour {
 	{
 		m_Rigidbody = GetComponent<Rigidbody>();
 		meshTransform = GameObject.Find ("NormalPlayer").transform;
-		//playerIndicator = GameObject.Find ("NormalPlayer");
-		//playerRenderer = playerIndicator.GetComponent<MeshRenderer> ();
-		//playerCollider = playerIndicator.GetComponent<Collider> ();
-		//playerRenderer = GetComponent<MeshRenderer> ();
-		//playerCollider = GetComponent<Collider> ();
-		//slinkIndicator = GameObject.Find ("SlinkingPlayer");
-		//slinkRenderer = slinkIndicator.GetComponent<MeshRenderer> ();
-		//slinkCollider = slinkIndicator.GetComponent<BoxCollider> ();
 		
 		m_Rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 
@@ -150,19 +134,6 @@ public class PlayerController : MonoBehaviour {
 		if (!Mathf.Approximately (meshTransform.localScale.y, shrinkScale))
 			slink = false;
 
-
-		if (slink) {
-			//playerRenderer.enabled = false;
-			//playerCollider.enabled = false;
-			//slinkRenderer.enabled = true;
-			//slinkCollider.enabled = true;
-		} else {
-			//slinkRenderer.enabled = false;
-			//slinkCollider.enabled = false;
-			//playerRenderer.enabled = true;
-			//playerCollider.enabled = true;
-		}
-
 		transform.rotation = Quaternion.Euler(0,transform.eulerAngles.y,0);
 
 		float MoveSpeed = slink ? slinkMoveSpeed : 3f;
@@ -189,7 +160,17 @@ public class PlayerController : MonoBehaviour {
 		
 		// climbling action.
 		if (climbing){
-			m_Rigidbody.velocity = MoveSpeed * ((transform.up * move.z) + (transform.right * move.x));
+			float moveZ = move.z;
+			float moveX = move.x;
+			float newSpeed;
+			if(moveZ > moveX){
+				newSpeed = move.z * MoveSpeed;
+			}else{
+				newSpeed = move.x * MoveSpeed;
+			}
+
+
+			m_Rigidbody.velocity = newSpeed * Vector3.Normalize(((transform.up * move.z) + (transform.right * move.x)));
 			m_Rigidbody.angularVelocity = Vector3.zero;
 			transform.rotation = Quaternion.LookRotation(handHit.normal*-1f);
 
