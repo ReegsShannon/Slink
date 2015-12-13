@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour {
 	public Image fill;
 	public bool onCooldown = false;
 	public Color cooldownColor = Color.red;
-	public Color normalColor = Color.white;
+	public Color normalColor = Color.blue;
 
 	public LayerMask mask;
 
@@ -97,7 +97,8 @@ public class PlayerController : MonoBehaviour {
 				fill.color = normalColor;
 			}
 		}
-
+		print (fill.color.ToString());
+		print (normalColor.ToString());
 		slinkSlider.value = slinkMeter;
 	}
 	

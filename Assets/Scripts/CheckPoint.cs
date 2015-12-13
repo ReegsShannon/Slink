@@ -20,7 +20,7 @@ public class CheckPoint : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider coll){
-		if(player.GetInstanceID() == coll.transform.parent.gameObject.GetInstanceID())
+		if(coll.tag == "Player")
 			respawnSpot = player.transform.position;
 	}
 }
