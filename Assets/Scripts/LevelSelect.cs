@@ -22,6 +22,8 @@ public class LevelSelect : MonoBehaviour {
 	public int                activeItem;
 	public List<GameObject>   menuItems;
 	public Color              highlight = Color.black;
+	public float timer = 0;
+	public float maxTimer = .2f;
 	
 	void Awake()
 	{
@@ -54,36 +56,40 @@ public class LevelSelect : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		InputDevice device = InputManager.ActiveDevice;
 
-		if (Input.GetKeyDown (KeyCode.Return) || device.Action1.WasPressed) 
-		{
-			switch(activeItem)
-			{
-			case (int)FighterOptions.ONE:
-				Application.LoadLevel("_level_1");
-				break;
-			case (int)FighterOptions.TWO:
-				Application.LoadLevel("_level_4");
-				break;
-			case (int)FighterOptions.THREE:
-				Application.LoadLevel("_level_5");
-				break;
-			case (int)FighterOptions.FOUR:
-				Application.LoadLevel("_level_6");
-				break;
-			case (int)FighterOptions.FIVE:
-				Application.LoadLevel("_level_6");
-				break;
+		if (timer <= 0) {
+			InputDevice device = InputManager.ActiveDevice;
+
+
+			if (Input.GetKeyDown (KeyCode.Return) || device.Action1.WasPressed) {
+				timer = maxTimer;
+				switch (activeItem) {
+				case (int)FighterOptions.ONE:
+					Application.LoadLevel ("_level_1");
+					break;
+				case (int)FighterOptions.TWO:
+					Application.LoadLevel ("_level_4");
+					break;
+				case (int)FighterOptions.THREE:
+					Application.LoadLevel ("_level_5");
+					break;
+				case (int)FighterOptions.FOUR:
+					Application.LoadLevel ("_level_6");
+					break;
+				case (int)FighterOptions.FIVE:
+					Application.LoadLevel ("_level_6");
+					break;
+				}
 			}
-		}
-		if (Input.GetKeyDown (KeyCode.DownArrow) || device.LeftStickY > 0f) 
-		{
-			MoveDownMenu ();
-		} 
-		else if (Input.GetKeyDown (KeyCode.UpArrow) || device.LeftStickY < 0f) 
-		{
-			MoveUpMenu();
+			if (Input.GetKeyDown (KeyCode.DownArrow) || device.LeftStickY < 0f) {
+				timer = maxTimer;
+				MoveDownMenu ();
+			} else if (Input.GetKeyDown (KeyCode.UpArrow) || device.LeftStickY > 0f) {
+				timer = maxTimer;
+				MoveUpMenu ();
+			}
+		} else {
+			timer -= Time.deltaTime;
 		}
 	}
 	
