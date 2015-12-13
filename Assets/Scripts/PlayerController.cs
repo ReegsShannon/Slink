@@ -41,7 +41,7 @@ public class PlayerController : MonoBehaviour {
 	public LayerMask mask;
 
 	Transform meshTransform;
-	public float shrinkSpeed = 4f;
+	public float shrinkSpeed = 6f;
 	public float shrinkScale = .01f;
 	
 	// detect raycat hit
@@ -163,10 +163,10 @@ public class PlayerController : MonoBehaviour {
 			float moveZ = move.z;
 			float moveX = move.x;
 			float newSpeed;
-			if(moveZ > moveX){
-				newSpeed = move.z * MoveSpeed;
+			if(Mathf.Abs(moveZ) > Mathf.Abs(moveX)){
+				newSpeed = Mathf.Abs (move.z) * MoveSpeed;
 			}else{
-				newSpeed = move.x * MoveSpeed;
+				newSpeed = Mathf.Abs (move.x) * MoveSpeed;
 			}
 
 
