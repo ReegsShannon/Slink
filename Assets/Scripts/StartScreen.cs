@@ -18,6 +18,8 @@ public class StartScreen : MonoBehaviour {
 	public int                activeItem;
 	public List<GameObject>   menuItems;
 	public Color              highlight = Color.black;
+	public float timer = 0;
+	public float maxTimer = .2f;
 	
 	void Awake()
 	{
@@ -49,33 +51,35 @@ public class StartScreen : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		InputDevice device = InputManager.ActiveDevice;
+		if (timer <= 0) {
+			InputDevice device = InputManager.ActiveDevice;
 
-		if (Input.GetKeyDown (KeyCode.Return) || device.Action1.WasPressed) 
-		{
-			switch(activeItem)
-			{
-			case (int)GameOptions.STARTGAME:
-				Application.LoadLevel("_level_1");
-				break;
-			case (int)GameOptions.LEVELSELECT:
-				print ("select level");
-				Application.LoadLevel("_select_level");
-				break;
-			case (int)GameOptions.QUITGAME:
-				Application.Quit();
-				print ("quit game");
-				break;
+			if (Input.GetKeyDown (KeyCode.Return) || device.Action1.WasPressed) {
+				timer = maxTimer;
+				switch (activeItem) {
+				case (int)GameOptions.STARTGAME:
+					Application.LoadLevel ("_level_1");
+					break;
+				case (int)GameOptions.LEVELSELECT:
+					print ("select level");
+					Application.LoadLevel ("_select_level");
+					break;
+				case (int)GameOptions.QUITGAME:
+					Application.Quit ();
+					print ("quit game");
+					break;
 			
+				}
 			}
-		}
-		if (Input.GetKeyDown (KeyCode.DownArrow) || device.LeftStickY > 0f) 
-		{
-			MoveDownMenu ();
-		} 
-		else if (Input.GetKeyDown (KeyCode.UpArrow) || device.LeftStickY < 0f) 
-		{
-			MoveUpMenu();
+			if (Input.GetKeyDown (KeyCode.DownArrow) || device.LeftStickY < 0f) {
+				timer = maxTimer;
+				MoveDownMenu ();
+			} else if (Input.GetKeyDown (KeyCode.UpArrow) || device.LeftStickY > 0f) {
+				timer = maxTimer;
+				MoveUpMenu ();
+			}
+		} else {
+			timer -= Time.deltaTime;
 		}
 	}
 	
