@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityStandardAssets.CrossPlatformInput;
+using InControl;
 
 public class StartScreen : MonoBehaviour {
 
@@ -47,7 +49,9 @@ public class StartScreen : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		if (Input.GetKeyDown (KeyCode.Return)) 
+		InputDevice device = InputManager.ActiveDevice;
+
+		if (Input.GetKeyDown (KeyCode.Return) || device.Action1.WasPressed) 
 		{
 			switch(activeItem)
 			{
@@ -65,11 +69,11 @@ public class StartScreen : MonoBehaviour {
 			
 			}
 		}
-		if (Input.GetKeyDown (KeyCode.DownArrow)) 
+		if (Input.GetKeyDown (KeyCode.DownArrow) || device.LeftStickY > 0f) 
 		{
 			MoveDownMenu ();
 		} 
-		else if (Input.GetKeyDown (KeyCode.UpArrow)) 
+		else if (Input.GetKeyDown (KeyCode.UpArrow) || device.LeftStickY < 0f) 
 		{
 			MoveUpMenu();
 		}
