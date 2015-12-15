@@ -5,11 +5,14 @@ using System.Collections.Generic;
 //patrolling - player hasn't been seen
 //chasing - player currently in enemy vision range
 //sawplayer - player not in vision range, but enemy still chasing
+//playerslinked - player went into slink to escape enemy
 public enum EnemyState
 {
 	Patrolling,
 	Chasing,
-	SawPlayer}
+	SawPlayer,
+	PlayerSlinked
+}
 ;
 
 public class EnemyScript : MonoBehaviour
@@ -24,6 +27,10 @@ public class EnemyScript : MonoBehaviour
 	public float patrolTimer = 2f;
 	public EnemyState curState = EnemyState.Patrolling;
 	public bool moving = false;
+	public float seenAngle; //angle enemy was facing when player slinked
+	public bool turningLeft = false;
+	public bool turningRight = false;
+	public float rotationSpeed = 15f; //rotation speed in rpm
 	GameObject player;
 	NavMeshAgent navMesh;
 	PlayerController playerScript;
@@ -56,16 +63,39 @@ public class EnemyScript : MonoBehaviour
 					//StartCoroutine (Patrol ());
 					//start to keep track of time, after 2 seconds, move to next point
 					moving = false;
-					patrolTimer = 2f;
+					patrolTimer = waitTime;
 				}
 			} else {
 				patrolTimer -= Time.deltaTime;
 				if (patrolTimer <= 0) {
-					GoToNextPoint();
+					GoToNextPoint ();
 					moving = true;
 				}
 			}
+		} else if (curState == EnemyState.PlayerSlinked) {
+			if (turningLeft) {
+				if(transform.eulerAngles.y <= seenAngle - 90) {
+					turningRight = true;
+					turningLeft = false;
+				} else {
+					transform.Rotate(0f,-6f*rotationSpeed*Time.deltaTime,0f);
+				}
+			} else if (turningRight) {
+				if(transform.eulerAngles.y >= seenAngle + 90) {
+					turningRight = false;
+					curState = EnemyState.Patrolling;
+				} else {
+					transform.Rotate (0f,6f*rotationSpeed*Time.deltaTime,0f);
+				}
+			} else {
+				turningLeft = true;
+				seenAngle = transform.rotation.y;
+			}
 		} else {
+			if (playerScript.isSlinking ()) {
+				curState = EnemyState.PlayerSlinked;
+				return;
+			}
 			if (curState == EnemyState.Chasing) {
 				navMesh.speed = 8f;
 			} else if (curState == EnemyState.SawPlayer) {
@@ -119,13 +149,13 @@ public class EnemyScript : MonoBehaviour
 		if (!playerScript.isSlinking ()) {
 			curState = EnemyState.Chasing;
 		} else {
-			curState = EnemyState.SawPlayer;
-			PlayerSeenTimer = 2f;
+			curState = EnemyState.PlayerSlinked;
 		}
 	}
 
 	void OnTriggerExit (Collider other)
 	{
+		print ("exit trigger");
 		if (other.tag == "Player") {
 			curState = EnemyState.SawPlayer;
 			PlayerSeenTimer = 2f;
