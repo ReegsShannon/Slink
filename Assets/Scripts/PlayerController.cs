@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour {
 	Transform meshTransform;
 	public float shrinkSpeed = 6f;
 	public float shrinkScale = .01f;
+	GameObject vis;
 	
 	// detect raycat hit
 	void DetectHit(ref RaycastHit detectedHit, Transform transform)
@@ -70,6 +71,8 @@ public class PlayerController : MonoBehaviour {
 
 		camPoint = GameObject.Find ("CamTarget").transform;
 		camLocalPos = camPoint.localPosition;
+		vis = GameObject.Find ("Visibility");
+		vis.SetActive (false);
 	}
 
 	void Update() {
@@ -137,9 +140,11 @@ public class PlayerController : MonoBehaviour {
 		if (slink) {
 			gameObject.layer = 13;
 			meshTransform.gameObject.layer = 13;
+			vis.SetActive(true);
 		} else {
 			gameObject.layer = 10;
 			meshTransform.gameObject.layer = 10;
+			vis.SetActive(false);
 		}
 
 		transform.rotation = Quaternion.Euler(0,transform.eulerAngles.y,0);

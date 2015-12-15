@@ -56,9 +56,7 @@ public class EnemyScript : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void Update ()
-	{
-		print (curState);
+	void Update (){
 		if (curState == EnemyState.Patrolling/*!waiting && !chasingPlayer*/) {
 			toDest = Vector3.Distance (transform.position, originalPosition);
 			if(patrolPoints.Count <= 1 && toDest < .5f){
