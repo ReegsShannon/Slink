@@ -134,6 +134,14 @@ public class PlayerController : MonoBehaviour {
 		if (!Mathf.Approximately (meshTransform.localScale.y, shrinkScale))
 			slink = false;
 
+		if (slink) {
+			gameObject.layer = 13;
+			meshTransform.gameObject.layer = 13;
+		} else {
+			gameObject.layer = 10;
+			meshTransform.gameObject.layer = 10;
+		}
+
 		transform.rotation = Quaternion.Euler(0,transform.eulerAngles.y,0);
 
 		float MoveSpeed = slink ? slinkMoveSpeed : 3f;
@@ -210,6 +218,7 @@ public class PlayerController : MonoBehaviour {
 			m_IsGrounded = true;
 		}
 		else{
+			print ("not grounded");
 			m_IsGrounded = false;
 		}
 	}
@@ -220,8 +229,20 @@ public class PlayerController : MonoBehaviour {
 
 	public void playerCaught() {
 		//send player back to previous checkpoint
-		CheckPoint.respawn ();
 		m_Rigidbody.velocity = Vector3.zero;
+		StartCoroutine (Wait ());
 	}
 
+	IEnumerator Wait() {
+		Time.timeScale = 0;
+		CheckPoint.respawn ();
+		float pauseEndTime = Time.realtimeSinceStartup + 1;
+		while (Time.realtimeSinceStartup < pauseEndTime)
+		{
+			yield return 0;
+		}
+		Time.timeScale = 1;
+	}
+	
+	
 }

@@ -34,9 +34,11 @@ public class EnemyScript : MonoBehaviour
 	GameObject player;
 	NavMeshAgent navMesh;
 	PlayerController playerScript;
-	Vector3 originalPosition;
+	public Vector3 originalPosition;
 	bool waiting;
 	float toDest;
+	float rotTraveled = 0;
+	Quaternion startRot;
 
 	// Use this for initialization
 	void Start ()
@@ -47,6 +49,7 @@ public class EnemyScript : MonoBehaviour
 		allEnemies = GameObject.FindGameObjectsWithTag ("Enemy");
 
 		originalPosition = transform.position;
+		startRot = transform.rotation;
 		navMesh.SetDestination (originalPosition);
 
 		//StartCoroutine (Patrol ());
@@ -55,7 +58,12 @@ public class EnemyScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		print (curState);
 		if (curState == EnemyState.Patrolling/*!waiting && !chasingPlayer*/) {
+			toDest = Vector3.Distance (transform.position, originalPosition);
+			if(patrolPoints.Count <= 1 && toDest < .5f){
+				transform.rotation = Quaternion.RotateTowards(transform.rotation, startRot, 8 * rotationSpeed * Time.deltaTime);
+			}
 			if (moving) {
 				toDest = Vector3.Distance (transform.position, navMesh.destination);
 				
@@ -74,39 +82,38 @@ public class EnemyScript : MonoBehaviour
 			}
 		} else if (curState == EnemyState.PlayerSlinked) {
 			if (turningLeft) {
-				if(transform.eulerAngles.y <= seenAngle - 90) {
+				if (rotTraveled >= 90) {
 					turningRight = true;
 					turningLeft = false;
+					seenAngle = transform.eulerAngles.y;
+					rotTraveled = 0;
 				} else {
-					transform.Rotate(0f,-6f*rotationSpeed*Time.deltaTime,0f);
+					transform.Rotate (0f, -6f * rotationSpeed * Time.deltaTime, 0f);
+					rotTraveled += 6f * rotationSpeed * Time.deltaTime;
 				}
 			} else if (turningRight) {
-				if(transform.eulerAngles.y >= seenAngle + 90) {
+				if (rotTraveled >= 180) {
 					turningRight = false;
 					curState = EnemyState.Patrolling;
+					rotTraveled = 0;
 				} else {
-					transform.Rotate (0f,6f*rotationSpeed*Time.deltaTime,0f);
+					transform.Rotate (0f, 6f * rotationSpeed * Time.deltaTime, 0f);
+					rotTraveled += 6f * rotationSpeed * Time.deltaTime;
 				}
 			} else {
 				turningLeft = true;
-				seenAngle = transform.rotation.y;
+				seenAngle = transform.eulerAngles.y;
+				rotTraveled = 0;
 			}
-		} else {
-			if (playerScript.isSlinking ()) {
+		} else if (curState == EnemyState.Chasing) {
+			navMesh.speed = 8f;
+			if(playerScript.isSlinking()){
 				curState = EnemyState.PlayerSlinked;
-				return;
 			}
-			if (curState == EnemyState.Chasing) {
-				navMesh.speed = 8f;
-			} else if (curState == EnemyState.SawPlayer) {
-				navMesh.speed = 6f;
-				PlayerSeenTimer -= Time.deltaTime;
-				if (PlayerSeenTimer <= 0)
-					curState = EnemyState.Patrolling;
+			else{
+				navMesh.SetDestination (player.transform.position);
 			}
-
-			navMesh.SetDestination (player.transform.position);
-		}
+		} 
 	}
 
 	IEnumerator Patrol ()
@@ -130,17 +137,6 @@ public class EnemyScript : MonoBehaviour
 		nextDest = (nextDest + 1) % patrolPoints.Count;
 	}
 
-	void OnTriggerEnter (Collider other)
-	{
-
-		if (other.tag != "Player")
-			return;
-
-		if (!playerScript.isSlinking ()) {
-			curState = EnemyState.Chasing;
-		}
-	}
-
 	void OnTriggerStay (Collider other)
 	{
 		if (other.tag != "Player")
@@ -148,23 +144,21 @@ public class EnemyScript : MonoBehaviour
 
 		if (!playerScript.isSlinking ()) {
 			curState = EnemyState.Chasing;
-		} else {
-			curState = EnemyState.PlayerSlinked;
-		}
+		} 
 	}
 
 	void OnTriggerExit (Collider other)
 	{
-		print ("exit trigger");
-		if (other.tag == "Player") {
-			curState = EnemyState.SawPlayer;
-			PlayerSeenTimer = 2f;
-		}
+		//if (other.tag == "Player") {
+		//	curState = EnemyState.SawPlayer;
+		//	PlayerSeenTimer = 2f;
+		//}
 	}
 
 	public void resetEnemy ()
 	{
 		transform.position = originalPosition;
+		transform.rotation = startRot;
 		navMesh.SetDestination (originalPosition);
 		curState = EnemyState.Patrolling;
 		PlayerSeenTimer = 0f;

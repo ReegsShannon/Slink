@@ -36,4 +36,21 @@ public class FollowCam : MonoBehaviour {
 		transform.position = Vector3.Lerp (transform.position, pos, u);
 		transform.LookAt (poi);
 	}
+
+	public void setCameraPos(){
+		Vector3 pos = poi.position;
+		pos -= poi.forward * distance;
+		pos += poi.up * height;
+		
+		RaycastHit hit;
+		Vector3 targetPosition = pos;
+		Vector3 playerPos = player.transform.position + Vector3.up * .1f;
+		if (Physics.Raycast (pos, playerPos - pos, out hit, (playerPos - pos).magnitude, mask.value)) {
+			targetPosition = (hit.point - playerPos) * .8f + playerPos;
+		}
+		
+		pos = targetPosition;
+		transform.position = pos;
+		transform.LookAt (poi);
+	}
 }
