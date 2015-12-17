@@ -5,6 +5,7 @@ public class CheckPoint : MonoBehaviour {
 
 	static GameObject player;
 	static Vector3 respawnSpot;
+	static Quaternion respawnRot;
 	static FollowCam cam;
 
 	void Awake(){
@@ -12,6 +13,7 @@ public class CheckPoint : MonoBehaviour {
 		cam = Camera.main.GetComponent<FollowCam> ();
 		if (player != null) {
 			respawnSpot = player.transform.position;
+			respawnRot = player.transform.rotation;
 		} else {
 			respawnSpot = Vector3.zero;
 		}
@@ -19,11 +21,14 @@ public class CheckPoint : MonoBehaviour {
 
 	public static void respawn(){
 		player.transform.position = respawnSpot;
+		player.transform.rotation = respawnRot;
 		cam.setCameraPos ();
 	}
 
 	void OnTriggerEnter(Collider coll){
-		if(coll.tag == "Player")
+		if (coll.tag == "Player") {
 			respawnSpot = player.transform.position;
+			respawnRot = player.transform.rotation;
+		}
 	}
 }
