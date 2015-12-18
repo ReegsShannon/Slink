@@ -22,7 +22,6 @@ public class PlayerController : MonoBehaviour {
 	// true if the character is on wall
 	public bool climbing = false;
 
-	public Text pauseText;
 	public bool paused = false;
 
 	public Transform camPoint;
@@ -80,22 +79,6 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Update() {
-
-		if (paused) {
-			pauseText.enabled = true;
-			Time.timeScale = 0;
-		} else {
-			pauseText.enabled = false;
-			Time.timeScale = 1;
-		}
-
-		InputDevice device = InputManager.ActiveDevice;
-		if (Input.GetKeyDown(KeyCode.Return) || device.MenuWasPressed) {
-			paused = !paused;
-		} else if (Input.GetKeyDown (KeyCode.Backspace) || device.Action4.WasPressed) {
-			Time.timeScale = 1;
-			Application.LoadLevel("_start_screen");
-		}
 
 		bool shrinking = false;
 		if (Input.GetKeyDown (KeyCode.R)) {
