@@ -71,13 +71,13 @@ public class LevelSelect : MonoBehaviour {
 					Application.LoadLevel ("_level_4");
 					break;
 				case (int)FighterOptions.THREE:
-					Application.LoadLevel ("_level_5");
+					Application.LoadLevel ("_level_5_redo");
 					break;
 				case (int)FighterOptions.FOUR:
 					Application.LoadLevel ("_level_6");
 					break;
 				case (int)FighterOptions.FIVE:
-					Application.LoadLevel ("_level_6");
+					Application.LoadLevel ("_level_8");
 					break;
 				}
 			}
